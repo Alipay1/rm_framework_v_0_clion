@@ -57,7 +57,6 @@ include_directories(CMSIS-DSP/Include CMSIS-DSP/PrivateInclude)
 
 #BSP
 include_directories(BSP)
-add_subdirectory(BSP)
 
 add_definitions(${defines})
 

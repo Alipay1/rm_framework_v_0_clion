@@ -58,7 +58,6 @@ include_directories(CMSIS-DSP/Include CMSIS-DSP/PrivateInclude)
 
 #BSP
 include_directories(BSP)
-add_subdirectory(BSP)
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx)
 
