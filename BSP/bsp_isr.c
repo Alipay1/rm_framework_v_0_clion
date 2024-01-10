@@ -19,6 +19,8 @@
 #include "tim.h"
 #include "usart.h"
 
+#include "app_pid.h"
+
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
 extern DMA_HandleTypeDef hdma_usart6_rx;
@@ -60,12 +62,19 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
 	}
   if (huart->Instance == USART1)
 	{
+	  extern osThreadId_t UART1RxTaskHandle;    // from freertos.c
+	  vTaskNotifyGiveFromISR (UART1RxTaskHandle, NULL);
 	  bsp_uart1_start_idle_dma_rx ();
 	  goto End_Of_HAL_UARTEx_RxEventCallback;
 	}
   if (huart->Instance == USART6)
 	{
+	  extern osThreadId_t UART6RxTaskHandle;    // from freertos.c
+	  vTaskNotifyGiveFromISR (UART6RxTaskHandle, NULL);
+
+	  pid_sscanf (bsp_get_uart6_rx_buf ());
 	  bsp_led_toggle (LED_GREEN);
+
 	  bsp_uart6_start_idle_dma_rx ();
 	  goto End_Of_HAL_UARTEx_RxEventCallback;
 	}

@@ -10,7 +10,7 @@ static CAN_TxHeaderTypeDef hcan2_tx_header;
 static uint8_t hcan1_message[8];
 static uint8_t hcan2_message[8];
 
-motor_measure_t MotorInfo[8];
+static motor_measure_t MotorInfo[8];
 
 chassis_transported_controller_data rc_ctcd = {0};
 
@@ -122,4 +122,31 @@ chassis_transported_controller_data *get_rc_data_from_chassis (void)
 ammo_booster_data *get_ammo_booster_info_ptr (void)
 {
   return &ammo_booster_info;
+}
+/**
+ * @param motor_num motor number
+ * @return total_ecd
+ *
+ * */
+int32_t bsp_can_updateTotalAngle (uint32_t motor_num)
+{
+  get_measure_pointer (motor_num)->speed_rpm;
+
+  int16_t difference = (int16_t)
+	  (MotorInfo[motor_num].ecd - MotorInfo[motor_num].last_ecd);
+
+  if (difference > ENCODER_THRESHOLD)
+	{
+	  // 8191->0
+	  difference -= (ENCODER_MAX_VALUE + 1);
+	}
+  else if (difference < -ENCODER_THRESHOLD)
+	{
+	  // 0->8191
+	  difference += (ENCODER_MAX_VALUE + 1);
+	}
+
+  MotorInfo[motor_num].total_ecd += difference;
+
+  return MotorInfo[motor_num].total_ecd;
 }

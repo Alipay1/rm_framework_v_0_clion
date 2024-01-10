@@ -38,6 +38,9 @@
 
 #include "bsp.h"
 
+#include "app_pid.h"
+#include "app_step_resp.h"
+
 #include "event_groups.h"
 #include "semphr.h"
 
@@ -56,7 +59,7 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define USE_STEP_RESPONSE 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -152,6 +155,37 @@ const osThreadAttr_t SERVOTask_attributes = {
 	.stack_size = sizeof (SERVOTaskBuffer),
 	.priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for STEP_RESPONSETa */
+osThreadId_t STEP_RESPONSETaHandle;
+const osThreadAttr_t STEP_RESPONSETa_attributes = {
+	.name = "STEP_RESPONSETa",
+	.stack_size = 256 * 4,
+	.priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for UART6RxTask */
+osThreadId_t UART6RxTaskHandle;
+uint32_t UART6RxTaskBuffer[512];
+osStaticThreadDef_t UART6RxTaskControlBlock;
+const osThreadAttr_t UART6RxTask_attributes = {
+	.name = "UART6RxTask",
+	.cb_mem = &UART6RxTaskControlBlock,
+	.cb_size = sizeof (UART6RxTaskControlBlock),
+	.stack_mem = &UART6RxTaskBuffer[0],
+	.stack_size = sizeof (UART6RxTaskBuffer),
+	.priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for UART1RxTask */
+osThreadId_t UART1RxTaskHandle;
+uint32_t UART1RxTaskBuffer[512];
+osStaticThreadDef_t UART1RxTaskControlBlock;
+const osThreadAttr_t UART1RxTask_attributes = {
+	.name = "UART1RxTask",
+	.cb_mem = &UART1RxTaskControlBlock,
+	.cb_size = sizeof (UART1RxTaskControlBlock),
+	.stack_mem = &UART1RxTaskBuffer[0],
+	.stack_size = sizeof (UART1RxTaskBuffer),
+	.priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for LED_q */
 osMessageQueueId_t LED_qHandle;
 const osMessageQueueAttr_t LED_q_attributes = {
@@ -191,6 +225,14 @@ const osEventFlagsAttr_t UART_FIFO_e_attributes = {
 	.cb_mem = &UART_FIFO_eControlBlock,
 	.cb_size = sizeof (UART_FIFO_eControlBlock),
 };
+/* Definitions for STEP_RESPON_GLOBAL_VARIABLE */
+osEventFlagsId_t STEP_RESPON_GLOBAL_VARIABLEHandle;
+osStaticEventGroupDef_t STEP_RESPON_GLOBAL_VARIABLEControlBlock;
+const osEventFlagsAttr_t STEP_RESPON_GLOBAL_VARIABLE_attributes = {
+	.name = "STEP_RESPON_GLOBAL_VARIABLE",
+	.cb_mem = &STEP_RESPON_GLOBAL_VARIABLEControlBlock,
+	.cb_size = sizeof (STEP_RESPON_GLOBAL_VARIABLEControlBlock),
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -204,6 +246,9 @@ void StartCANTask (void *argument);
 void StartUART1Task (void *argument);
 void StartUART6Task (void *argument);
 void StartSERVOTask (void *argument);
+void StartSTEP_RESPONSETask (void *argument);
+void StartUART6RxTask (void *argument);
+void StartUART1RxTask (void *argument);
 
 void MX_FREERTOS_Init (void); /* (MISRA C 2004 rule 8.1) */
 
@@ -285,12 +330,24 @@ void MX_FREERTOS_Init (void)
   /* creation of SERVOTask */
   SERVOTaskHandle = osThreadNew (StartSERVOTask, NULL, &SERVOTask_attributes);
 
+  /* creation of STEP_RESPONSETa */
+  STEP_RESPONSETaHandle = osThreadNew (StartSTEP_RESPONSETask, NULL, &STEP_RESPONSETa_attributes);
+
+  /* creation of UART6RxTask */
+  UART6RxTaskHandle = osThreadNew (StartUART6RxTask, NULL, &UART6RxTask_attributes);
+
+  /* creation of UART1RxTask */
+  UART1RxTaskHandle = osThreadNew (StartUART1RxTask, NULL, &UART1RxTask_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
   /* creation of UART_FIFO_e */
   UART_FIFO_eHandle = osEventFlagsNew (&UART_FIFO_e_attributes);
+
+  /* creation of STEP_RESPON_GLOBAL_VARIABLE */
+  STEP_RESPON_GLOBAL_VARIABLEHandle = osEventFlagsNew (&STEP_RESPON_GLOBAL_VARIABLE_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
@@ -334,7 +391,7 @@ void StartLEDTask (void *argument)
 //	  bsp_led_blink (LED_RED);
 //	  bsp_led_blink (LED_GREEN);
 //	  bsp_led_blink (LED_BLUE);
-	  bsp_led_toggle (LED_GREEN);
+//	  bsp_led_toggle (LED_GREEN);
 	  osDelay (pdMS_TO_TICKS(1000));
 	}
   /* USER CODE END StartLEDTask */
@@ -368,25 +425,42 @@ void StartBUZTask (void *argument)
 void StartCANTask (void *argument)
 {
   /* USER CODE BEGIN StartCANTask */
+
+  TickType_t xLastWakeUpTime = xTaskGetTickCount ();
   char buf[128] = {0};
   int str_len = 0;
+
+  PID_Setup ();
+  PID *wheel0 = pid_get_struct_pointer (0, NORMAL_MOTOR);
+  PID *servo0_pos = pid_get_struct_pointer (4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo0_spd = pid_get_struct_pointer (4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  motor_measure_t *motor0 = get_measure_pointer (4);
   /* Infinite loop */
   for (;;)
 	{
-//	  bsp_printf (BSP_UART1, "HAL_TICK:%lu BSP_UART1\r\n", HAL_GetTick ());
-//	  bsp_printf (BSP_UART6, "HAL_TICK:%lu BSP_UART6\r\n", HAL_GetTick ());
 
-	  motor_measure_t *motor = get_measure_pointer (0);
-	  bsp_printf (BSP_UART6, "ECD: %d\r\nSpeed RPM: %d\r\nGiven Current: %d\r\nTemperature: %u\r\nLast ECD: %d\r\nLast Last ECD: %d\r\n",
-				  motor->ecd,
-				  motor->speed_rpm,
-				  motor->given_current,
-				  motor->temperate,
-				  motor->last_ecd,
-				  motor->last_last_ecd);
-	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234, 100, 0, 0, 0);
-	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_5678, 1000, 0, 0, 0);
-	  osDelay (10);
+	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
+	  PID_Calculate ();
+//	  bsp_printf (BSP_UART6, "total_ecd:%d\r\n", motor0_pos->total_ecd);
+//	  bsp_printf (BSP_UART6, "run:%d\r\nkp:%f\r\nki:%f\r\nkd:%f\r\n", wheel0->active ? 1 : 0,
+//				  wheel0->Kp, wheel0->Ki, wheel0->Kd);
+	  bsp_printf (BSP_UART6, "%f,%f,%f,%d\r\n",
+				  servo0_pos->ideal,
+				  servo0_pos->actual,
+				  servo0_pos->output,
+				  motor0->speed_rpm);
+	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
+					   (int16_t) wheel0->output,
+					   0,
+					   0,
+					   0);
+	  CAN_SendMessage (CAN_CHANNEL_1,
+					   MOTOR_5678,
+					   (int16_t) servo0_spd->output,
+					   0,
+					   0,
+					   0);
+	  vTaskDelayUntil (&xLastWakeUpTime, 1);
 	}
   /* USER CODE END StartCANTask */
 }
@@ -495,12 +569,90 @@ void StartUART6Task (void *argument)
 void StartSERVOTask (void *argument)
 {
   /* USER CODE BEGIN StartSERVOTask */
+
   /* Infinite loop */
   for (;;)
 	{
 	  osDelay (1);
 	}
   /* USER CODE END StartSERVOTask */
+}
+
+/* USER CODE BEGIN Header_StartSTEP_RESPONSETask */
+/**
+* @brief Function implementing the STEP_RESPONSETa thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartSTEP_RESPONSETask */
+void StartSTEP_RESPONSETask (void *argument)
+{
+  /* USER CODE BEGIN StartSTEP_RESPONSETask */
+  TickType_t xLastWakeUpTime = xTaskGetTickCount ();
+
+#if USE_STEP_RESPONSE == 0 /*defined in freertos.c*/
+  /*if not in step response mode then delete self*/
+  vTaskDelete (NULL);
+#endif
+
+  /* Infinite loop */
+  for (;;)
+	{
+	  set_bsp_pid_step_response_target (4000);
+	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
+	  set_bsp_pid_step_response_target (-4000);
+	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
+	}
+  /* USER CODE END StartSTEP_RESPONSETask */
+}
+
+/* USER CODE BEGIN Header_StartUART6RxTask */
+/**
+* @brief Function implementing the UART6RxTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartUART6RxTask */
+void StartUART6RxTask (void *argument)
+{
+  /* USER CODE BEGIN StartUART6RxTask */
+  /* Infinite loop */
+  for (;;)
+	{
+	  if (xTaskNotifyWait (0,
+						   UINT32_MAX,
+						   NULL,
+						   portMAX_DELAY) == pdPASS)
+		{
+//		  pid_sscanf (bsp_get_uart6_rx_buf ());
+//		  bsp_led_toggle (LED_GREEN);
+		}
+	}
+  /* USER CODE END StartUART6RxTask */
+}
+
+/* USER CODE BEGIN Header_StartUART1RxTask */
+/**
+* @brief Function implementing the UART1RxTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartUART1RxTask */
+void StartUART1RxTask (void *argument)
+{
+  /* USER CODE BEGIN StartUART1RxTask */
+  /* Infinite loop */
+  for (;;)
+	{
+	  if (xTaskNotifyWait (0,
+						   UINT32_MAX,
+						   NULL,
+						   portMAX_DELAY) == pdPASS)
+		{
+//		  pid_sscanf (bsp_get_uart6_rx_buf ());
+		}
+	}
+  /* USER CODE END StartUART1RxTask */
 }
 
 /* Private application code --------------------------------------------------*/

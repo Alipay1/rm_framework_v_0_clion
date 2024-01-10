@@ -29,7 +29,7 @@ HAL_StatusTypeDef bsp_uart1_start_idle_dma_rx (void);
 HAL_StatusTypeDef bsp_uart6_start_idle_dma_rx (void);
 int bsp_uart_init (void);
 int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...);
-const char *bsp_get_uart1_rx_buf (void);
-const char *bsp_get_uart6_rx_buf (void);
+char *bsp_get_uart1_rx_buf (void);
+char *bsp_get_uart6_rx_buf (void);
 
 #endif // C_BOARD_STANDARD_ROBOT_BSP_UART_H

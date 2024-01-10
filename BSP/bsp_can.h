@@ -15,6 +15,9 @@ extern CAN_HandleTypeDef hcan2;
 #define MOUSE_FREQ 200
 #define MOUSE_PERIOD (float)(1 / MOUSE_FREQ)
 
+#define ENCODER_MAX_VALUE 8191
+#define ENCODER_THRESHOLD (ENCODER_MAX_VALUE / 2)
+
 #define bsp_can_get_motor_measure(ptr, data)                                   \
     {                                                                  \
         (ptr)->last_last_ecd = (ptr)->last_ecd;                        \
@@ -85,6 +88,7 @@ typedef struct {
   uint8_t temperate;
   int16_t last_ecd;
   int16_t last_last_ecd;
+  int32_t total_ecd;
 } motor_measure_t;
 
 typedef struct {
@@ -130,5 +134,7 @@ uint32_t
 CAN_SendMessage (can_channel_id CAN_Channel, motor_id_range MOTOR_ID_RANGE, int16_t Motor1, int16_t Motor2, int16_t Motor3, int16_t Motor4);
 
 ammo_booster_data *get_ammo_booster_info_ptr (void);
+
+int32_t bsp_can_updateTotalAngle (uint32_t motor_num);
 
 #endif //_BSP_CAN_H_

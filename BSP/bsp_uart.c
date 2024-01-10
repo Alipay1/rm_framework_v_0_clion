@@ -93,11 +93,11 @@ int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...)
   return written;
 }
 
-const char *bsp_get_uart1_rx_buf (void)
+char *bsp_get_uart1_rx_buf (void)
 {
   return bsp_uart1_rx_buf;
 }
-const char *bsp_get_uart6_rx_buf (void)
+char *bsp_get_uart6_rx_buf (void)
 {
   return bsp_uart6_rx_buf;
 }
