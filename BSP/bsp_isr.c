@@ -97,7 +97,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 			{
 			  bsp_can_get_motor_measure (get_measure_pointer (rx_header.StdId - CAN_3508_M1_ID),
 										 rx_data);
-			  bsp_led_toggle (LED_BLUE);
+//			  bsp_led_toggle (LED_BLUE);
 			  break;
 			}
 

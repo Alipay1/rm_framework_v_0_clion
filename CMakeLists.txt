@@ -59,11 +59,13 @@ include_directories(CMSIS-DSP/Include CMSIS-DSP/PrivateInclude)
 
 #BSP
 include_directories(BSP)
+include_directories(APP)
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx)
 
 file(GLOB_RECURSE SOURCES "Startup/*.*" "Src/*.*" "Middlewares/*.*" "Drivers/*.*"
-"BSP/*.c")
+"BSP/*.c"
+"APP/*.c")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F407IGHX_FLASH.ld)
 

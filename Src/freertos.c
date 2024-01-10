@@ -102,11 +102,11 @@ const osThreadAttr_t BUZTask_attributes = {
 	.cb_size = sizeof (BUZTaskControlBlock),
 	.stack_mem = &BUZTaskBuffer[0],
 	.stack_size = sizeof (BUZTaskBuffer),
-	.priority = (osPriority_t) osPriorityNormal,
+	.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for CANTask */
 osThreadId_t CANTaskHandle;
-uint32_t CANTaskBuffer[128];
+uint32_t CANTaskBuffer[1024];
 osStaticThreadDef_t CANTaskControlBlock;
 const osThreadAttr_t CANTask_attributes = {
 	.name = "CANTask",
@@ -334,8 +334,8 @@ void StartLEDTask (void *argument)
 //	  bsp_led_blink (LED_RED);
 //	  bsp_led_blink (LED_GREEN);
 //	  bsp_led_blink (LED_BLUE);
-//	  bsp_led_toggle (LED_GREEN);
-	  osDelay (pdMS_TO_TICKS(100));
+	  bsp_led_toggle (LED_GREEN);
+	  osDelay (pdMS_TO_TICKS(1000));
 	}
   /* USER CODE END StartLEDTask */
 }
@@ -376,9 +376,16 @@ void StartCANTask (void *argument)
 //	  bsp_printf (BSP_UART1, "HAL_TICK:%lu BSP_UART1\r\n", HAL_GetTick ());
 //	  bsp_printf (BSP_UART6, "HAL_TICK:%lu BSP_UART6\r\n", HAL_GetTick ());
 
-	  bsp_printf (BSP_UART6, "C620Info:%l\r\n", get_measure_pointer (0)->speed_rpm);
-	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234, 1000, 0, 0, 0);
-	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_5678, 2000, 0, 0, 0);
+	  motor_measure_t *motor = get_measure_pointer (0);
+	  bsp_printf (BSP_UART6, "ECD: %d\r\nSpeed RPM: %d\r\nGiven Current: %d\r\nTemperature: %u\r\nLast ECD: %d\r\nLast Last ECD: %d\r\n",
+				  motor->ecd,
+				  motor->speed_rpm,
+				  motor->given_current,
+				  motor->temperate,
+				  motor->last_ecd,
+				  motor->last_last_ecd);
+	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234, 100, 0, 0, 0);
+	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_5678, 1000, 0, 0, 0);
 	  osDelay (10);
 	}
   /* USER CODE END StartCANTask */
