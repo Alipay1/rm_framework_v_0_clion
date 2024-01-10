@@ -179,39 +179,39 @@ int PID_Calculate (void)
 
   /*reset motinfo to motor 5 (first 6020)*/
   /*calculate PID position first*/
-  for (int i = 8; i < PID_SPEED_STRUCT_NUM;)
-	{
-
-	  (pid_speed_struct + i)->actual = (float) (motinfo + i - 4)->total_ecd;
-
-	  if ((pid_speed_struct + i)->active == true)
-		{
-		  if ((pid_speed_struct + i)->Error == 0)
-			{
-
-			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
-			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
-
-			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
-			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
-			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
-											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
-												+ (pid_speed_struct + i)->err_last_last);
-
-			  (pid_speed_struct + i)->output =
-				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
-			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
-			  PID_Out_Limit (pid_speed_struct + i);
-
-			  /*give PID speed target value*/
-			  //todo 添加自由控制双环开启状态的宏
-			  (pid_speed_struct + i - 4)->ideal =
-				  (pid_speed_struct + i)->output;
-			}
-		}
-	  motinfo++;
-	  i++;
-	}
+//  for (int i = 8; i < PID_SPEED_STRUCT_NUM;)
+//	{
+//
+//	  (pid_speed_struct + i)->actual = (float) (motinfo + i - 4)->total_ecd;
+//
+//	  if ((pid_speed_struct + i)->active == true)
+//		{
+//		  if ((pid_speed_struct + i)->Error == 0)
+//			{
+//
+//			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
+//			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
+//
+//			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
+//			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
+//			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
+//											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
+//												+ (pid_speed_struct + i)->err_last_last);
+//
+//			  (pid_speed_struct + i)->output =
+//				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
+//			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
+//			  PID_Out_Limit (pid_speed_struct + i);
+//
+//			  /*give PID speed target value*/
+//			  //todo 添加自由控制双环开启状态的宏
+//			  (pid_speed_struct + i - 4)->ideal =
+//				  (pid_speed_struct + i)->output;
+//			}
+//		}
+//	  motinfo++;
+//	  i++;
+//	}
 
   for (int i = 0; i < PID_SPEED_STRUCT_NUM;)
 	{
