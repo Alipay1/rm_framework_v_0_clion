@@ -31,5 +31,7 @@ int bsp_uart_init (void);
 int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...);
 char *bsp_get_uart1_rx_buf (void);
 char *bsp_get_uart6_rx_buf (void);
+void usart1_tx_dma_init (void);
+void usart1_tx_dma_enable (uint8_t *data, uint16_t len);
 
 #endif // C_BOARD_STANDARD_ROBOT_BSP_UART_H

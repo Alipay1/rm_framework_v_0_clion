@@ -32,6 +32,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "bsp.h"
+#include "app_rc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -120,6 +121,7 @@ int main (void)
   /* USER CODE BEGIN 2 */
   bsp_uart_init ();
   CAN_FilterSetup ();
+  remote_control_init ();
   /* USER CODE END 2 */
 
   /* Init scheduler */
