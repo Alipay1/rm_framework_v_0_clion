@@ -441,17 +441,18 @@ void StartCANTask (void *argument)
 
 	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
 	  PID_Calculate ();
+	  bsp_printf (BSP_UART6, "addr:%p\r\n", wheel0);
 //	  bsp_printf (BSP_UART6, "total_ecd:%d\r\n", motor0_pos->total_ecd);
 //	  bsp_printf (BSP_UART6, "run:%d\r\nkp:%f\r\nki:%f\r\nkd:%f\r\n", wheel0->active ? 1 : 0,
 //				  wheel0->Kp, wheel0->Ki, wheel0->Kd);
-	  bsp_printf (BSP_UART6, "%f,%f,%f,%f,%f,%f,%d\r\n",
-				  servo0_pos->ideal,
-				  servo0_pos->actual,
-				  servo0_pos->output,
-				  servo0_spd->ideal,
-				  servo0_spd->actual,
-				  servo0_spd->output,
-				  motor0->total_ecd);
+//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f,%f,%f,%d\r\n",
+//				  servo0_pos->ideal,
+//				  servo0_pos->actual,
+//				  servo0_pos->output,
+//				  servo0_spd->ideal,
+//				  servo0_spd->actual,
+//				  servo0_spd->output,
+//				  motor0->total_ecd);
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
 					   0,
