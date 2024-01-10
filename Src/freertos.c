@@ -34,6 +34,8 @@
 #include "tim.h"
 #include "usart.h"
 
+#include "stdio.h"
+
 #include "bsp_led.h"
 #include "bsp_uart.h"
 
@@ -101,7 +103,7 @@ const osThreadAttr_t BUZTask_attributes = {
 	.cb_size = sizeof (BUZTaskControlBlock),
 	.stack_mem = &BUZTaskBuffer[0],
 	.stack_size = sizeof (BUZTaskBuffer),
-	.priority = (osPriority_t) osPriorityLow,
+	.priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for CANTask */
 osThreadId_t CANTaskHandle;
@@ -352,15 +354,15 @@ void StartBUZTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-	  if (xSemaphoreTake(UART1_FIFO_muHandle, 0) == pdTRUE)
-		{
-		  xMessageBufferSend(UART1_MB_HANDLE,
-							 "2.000000,0.000000\r\n",
-							 sizeof ("2.000000,0.000000\r\n"),
-							 1000);
-		  xSemaphoreGive(UART1_FIFO_muHandle);
-		}
-	  osDelay (1);
+//	  if (xSemaphoreTake(UART1_FIFO_muHandle, portMAX_DELAY) == pdTRUE)
+//		{
+//		  while (xMessageBufferSend(UART1_MB_HANDLE,
+//									"2.000000,0.000000\r\n",
+//									sizeof ("2.000000,0.000000\r\n"),
+//									0) == 0);
+//		  xSemaphoreGive(UART1_FIFO_muHandle);
+//		}
+	  osDelay (10);
 	}
   /* USER CODE END StartBUZTask */
 }
@@ -375,15 +377,22 @@ void StartBUZTask (void *argument)
 void StartCANTask (void *argument)
 {
   /* USER CODE BEGIN StartCANTask */
+  char buf[128] = {0};
+  int str_len = 0;
   /* Infinite loop */
   for (;;)
 	{
 	  if (xSemaphoreTake(UART1_FIFO_muHandle, portMAX_DELAY) == pdTRUE)
 		{
-		  xMessageBufferSend(UART1_MB_HANDLE,
-							 "1.000000,0.000000\r\n",
-							 sizeof ("1.000000,0.000000\r\n"),
-							 1000);
+//		  str_len = sprintf (buf, "HALTick:%lu\r\n", HAL_GetTick () / 1000);
+//		  xMessageBufferSend(UART1_MB_HANDLE,
+//							 buf,
+//							 str_len,
+//							 0);
+		  while (xMessageBufferSend(UART1_MB_HANDLE,
+									"1.000000,0.000000\r\n",
+									sizeof ("1.000000,0.000000\r\n"),
+									0) == 0);
 		  xSemaphoreGive(UART1_FIFO_muHandle);
 		}
 	  osDelay (1);
@@ -403,6 +412,7 @@ void StartUART1Task (void *argument)
   /* USER CODE BEGIN StartUART1Task */
 
   /*private variables*/
+  TickType_t previousWakeTime = xTaskGetTickCount ();
   char rx_data[MESSAGE_BUFFER_SIZE] = {0};
   uint32_t rx_size = 0;
 
@@ -434,6 +444,7 @@ void StartUART1Task (void *argument)
 			  xSemaphoreGive(UART1_FIFO_muHandle);
 			}
 		}
+//	  vTaskDelayUntil (&previousWakeTime, 1);
 	  //    bsp_led_toggle(LED_GREEN);  //redundant led toggle for quick running state check
 	}
   /* USER CODE END StartUART1Task */

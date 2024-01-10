@@ -6,6 +6,7 @@
 
 /Middlewares
 
+!README.md
 !USER_GUIDE.md
 
 !/Src/*.*
