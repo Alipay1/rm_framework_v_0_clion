@@ -7,5 +7,6 @@
 
 #include "bsp_led.h"
 #include "bsp_uart.h"
+#include "bsp_can.h"
 
 #endif // C_BOARD_STANDARD_ROBOT_BSP_H

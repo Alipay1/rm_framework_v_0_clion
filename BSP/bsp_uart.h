@@ -12,9 +12,6 @@
 
 #define MESSAGE_BUFFER_SIZE 1024
 
-#define UART1_TX_CPT_TASK_NOTIFY_BIT (1 << 0)
-#define UART6_TX_CPT_TASK_NOTIFY_BIT (1 << 6)
-
 extern MessageBufferHandle_t UART1_MB_HANDLE;
 extern MessageBufferHandle_t UART6_MB_HANDLE;
 typedef enum {

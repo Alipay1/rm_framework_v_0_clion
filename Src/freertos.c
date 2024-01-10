@@ -36,8 +36,7 @@
 
 #include "stdio.h"
 
-#include "bsp_led.h"
-#include "bsp_uart.h"
+#include "bsp.h"
 
 #include "event_groups.h"
 #include "semphr.h"
@@ -374,8 +373,13 @@ void StartCANTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-	  bsp_printf (BSP_UART6, "HAL_TICK:%lu\r\n", HAL_GetTick ());
-	  osDelay (1);
+//	  bsp_printf (BSP_UART1, "HAL_TICK:%lu BSP_UART1\r\n", HAL_GetTick ());
+//	  bsp_printf (BSP_UART6, "HAL_TICK:%lu BSP_UART6\r\n", HAL_GetTick ());
+
+	  bsp_printf (BSP_UART6, "C620Info:%l\r\n", get_measure_pointer (0)->speed_rpm);
+	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234, 1000, 0, 0, 0);
+	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_5678, 2000, 0, 0, 0);
+	  osDelay (10);
 	}
   /* USER CODE END StartCANTask */
 }

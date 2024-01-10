@@ -73,3 +73,62 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
   End_Of_HAL_UARTEx_RxEventCallback:
   taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus);
 }
+
+void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
+{
+  static uint8_t rx_data[8];
+  CAN_RxHeaderTypeDef rx_header;
+
+  HAL_CAN_GetRxMessage (hcan, CAN_RX_FIFO0, &rx_header, rx_data);
+
+  if (hcan->Instance == CAN1)
+	{
+	  switch (rx_header.StdId)
+		{
+
+		  case CAN_3508_M1_ID:
+		  case CAN_3508_M2_ID:
+		  case CAN_3508_M3_ID:
+		  case CAN_3508_M4_ID:
+
+		  case CAN_YAW_MOTOR_ID:
+		  case CAN_PIT_MOTOR_ID:
+		  case CAN_TRIGGER_MOTOR_ID:
+			{
+			  bsp_can_get_motor_measure (get_measure_pointer (rx_header.StdId - CAN_3508_M1_ID),
+										 rx_data);
+			  bsp_led_toggle (LED_BLUE);
+			  break;
+			}
+
+		  default:
+			{
+			  break;
+			}
+		}
+	}
+
+  if (hcan->Instance == CAN2)
+	{
+	  switch (rx_header.StdId)
+		{
+		  case CHASSIS_CONTROLLER:
+			{
+//			  get_rc_from_chassis(&rc_ctcd, rx_data);
+			  break;
+			}
+		  case AMMO_BOOSTER:
+			{
+//			  get_ammo_booster_info (&ammo_booster_info, rx_data);
+			  break;
+			}
+		  case RC_SWITCH:
+			{
+//			  rc->rc.s[0] = rx_data[0];
+//			  rc->rc.s[1] = rx_data[1];
+			  break;
+			}
+		  default: break;
+		}
+	}
+}
