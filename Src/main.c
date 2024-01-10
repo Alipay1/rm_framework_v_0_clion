@@ -69,6 +69,8 @@ void MX_FREERTOS_Init (void);
 /*configAPPLICATION_ALLOCATED_HEAP FreeRTOS heap defined in CCMRAM*/
 __attribute__ ((section(".ccmram"))) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
 
+__attribute__ ((section(".ccmram"))) uint32_t g_osRuntimeCounter = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -118,10 +120,12 @@ int main (void)
   MX_TIM13_Init ();
   MX_TIM1_Init ();
   MX_TIM14_Init ();
+  MX_TIM7_Init ();
   /* USER CODE BEGIN 2 */
   bsp_uart_init ();
   CAN_FilterSetup ();
   remote_control_init ();
+  HAL_TIM_Base_Start_IT (&htim7);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -217,7 +221,10 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 	  HAL_IncTick ();
 	}
   /* USER CODE BEGIN Callback 1 */
-
+  if (htim->Instance == TIM7)
+	{
+	  g_osRuntimeCounter++;
+	}
   /* USER CODE END Callback 1 */
 }
 
