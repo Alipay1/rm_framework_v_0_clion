@@ -104,8 +104,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 		  case CAN_PIT_MOTOR_ID:
 		  case CAN_TRIGGER_MOTOR_ID:
 			{
-			  bsp_can_get_motor_measure (get_measure_pointer (rx_header.StdId - CAN_3508_M1_ID),
+			  int i = rx_header.StdId - CAN_3508_M1_ID;
+			  bsp_can_get_motor_measure (get_measure_pointer (i),
 										 rx_data);
+			  bsp_can_updateTotalAngle (i);
+
 //			  bsp_led_toggle (LED_BLUE);
 			  break;
 			}

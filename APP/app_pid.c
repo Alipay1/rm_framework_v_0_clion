@@ -66,9 +66,9 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 4;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 10.0F; /*5 6020 no.1*/
-  (pid_speed_struct + i)->Ki = 0;
-  (pid_speed_struct + i)->Kd = 0;
+  (pid_speed_struct + i)->Kp = 1.0F; /*5 6020 no.1*/
+  (pid_speed_struct + i)->Ki = 0.0F;
+  (pid_speed_struct + i)->Kd = 0.01F;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
@@ -179,10 +179,10 @@ int PID_Calculate (void)
 
   /*reset motinfo to motor 5 (first 6020)*/
   /*calculate PID position first*/
-  for (int i = 7; i < PID_SPEED_STRUCT_NUM;)
+  for (int i = 8; i < PID_SPEED_STRUCT_NUM;)
 	{
 
-	  (pid_speed_struct + i)->actual = (float) bsp_can_updateTotalAngle (i - 4);
+	  (pid_speed_struct + i)->actual = (float) (motinfo + i - 4)->total_ecd;
 
 	  if ((pid_speed_struct + i)->active == true)
 		{
