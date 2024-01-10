@@ -9,7 +9,7 @@ GND TXD RXD
 ### CAN1:
 CANL CANH
 ### CAN2:
-5V GND CANH CANL
+5V GND CANH CANL          
 ### KEY:
 PA0 (PULL_UP)
 ### RGB LED:

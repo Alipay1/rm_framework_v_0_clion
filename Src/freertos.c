@@ -354,14 +354,6 @@ void StartBUZTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-//	  if (xSemaphoreTake(UART1_FIFO_muHandle, portMAX_DELAY) == pdTRUE)
-//		{
-//		  while (xMessageBufferSend(UART1_MB_HANDLE,
-//									"2.000000,0.000000\r\n",
-//									sizeof ("2.000000,0.000000\r\n"),
-//									0) == 0);
-//		  xSemaphoreGive(UART1_FIFO_muHandle);
-//		}
 	  osDelay (10);
 	}
   /* USER CODE END StartBUZTask */
@@ -382,19 +374,7 @@ void StartCANTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-	  if (xSemaphoreTake(UART1_FIFO_muHandle, portMAX_DELAY) == pdTRUE)
-		{
-//		  str_len = sprintf (buf, "HALTick:%lu\r\n", HAL_GetTick () / 1000);
-//		  xMessageBufferSend(UART1_MB_HANDLE,
-//							 buf,
-//							 str_len,
-//							 0);
-		  while (xMessageBufferSend(UART1_MB_HANDLE,
-									"1.000000,0.000000\r\n",
-									sizeof ("1.000000,0.000000\r\n"),
-									0) == 0);
-		  xSemaphoreGive(UART1_FIFO_muHandle);
-		}
+	  bsp_printf (BSP_UART6, "HAL_TICK:%lu\r\n", HAL_GetTick ());
 	  osDelay (1);
 	}
   /* USER CODE END StartCANTask */
@@ -412,7 +392,6 @@ void StartUART1Task (void *argument)
   /* USER CODE BEGIN StartUART1Task */
 
   /*private variables*/
-  TickType_t previousWakeTime = xTaskGetTickCount ();
   char rx_data[MESSAGE_BUFFER_SIZE] = {0};
   uint32_t rx_size = 0;
 
@@ -444,7 +423,6 @@ void StartUART1Task (void *argument)
 			  xSemaphoreGive(UART1_FIFO_muHandle);
 			}
 		}
-//	  vTaskDelayUntil (&previousWakeTime, 1);
 	  //    bsp_led_toggle(LED_GREEN);  //redundant led toggle for quick running state check
 	}
   /* USER CODE END StartUART1Task */
@@ -462,16 +440,36 @@ void StartUART6Task (void *argument)
   /* USER CODE BEGIN StartUART6Task */
   char rx_data[MESSAGE_BUFFER_SIZE] = {0};
   uint32_t rx_size = 0;
+
   /* Infinite loop */
   for (;;)
 	{
-	  rx_size = xMessageBufferReceive(UART6_MB_HANDLE, rx_data,
-									  MESSAGE_BUFFER_SIZE, portMAX_DELAY);
+	  /*wait for data coming from message buffer*/
+	  rx_size = xMessageBufferReceive(UART6_MB_HANDLE,
+									  rx_data,
+									  MESSAGE_BUFFER_SIZE,
+									  portMAX_DELAY);
+
+	  /*if received data*/
 	  if (rx_size)
 		{
-		  HAL_UART_Transmit (&huart1, (uint8_t *) rx_data, rx_size, 0xFFFF);
+
+		  /*take the mutex to prevent other IO operations*/
+		  if (xSemaphoreTake(UART6_FIFO_muHandle, portMAX_DELAY) == pdTRUE)
+			{
+			  HAL_UART_Transmit_DMA (&huart6, (uint8_t *) rx_data, rx_size);
+			}
+
+		  /*wait for TaskNotify from bsp_isr.c HAL_UART_TxCpltCallback of UART1 to acknowledge dma transfer done*/
+		  if (xTaskNotifyWait (0,
+							   UINT32_MAX,
+							   NULL,
+							   portMAX_DELAY) == pdPASS)
+			{
+			  xSemaphoreGive(UART6_FIFO_muHandle);
+			}
 		}
-	  //    bsp_led_toggle(LED_BLUE);
+	  //    bsp_led_toggle(LED_GREEN);  //redundant led toggle for quick running state check
 	}
   /* USER CODE END StartUART6Task */
 }

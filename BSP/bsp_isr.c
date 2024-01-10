@@ -19,44 +19,57 @@
 #include "tim.h"
 #include "usart.h"
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart6_rx;
+
+void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart)
+{
   UBaseType_t uxSavedInterruptStatus;
   uxSavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
 
-  if (huart->Instance == USART1) {
-    extern osMutexId_t UART1_FIFO_muHandle; // from freertos.c
-    extern osThreadId_t UART1TaskHandle;    // from freertos.c
-    vTaskNotifyGiveFromISR(UART1TaskHandle, NULL);
-    bsp_led_toggle(LED_RED);
+  if (huart->Instance == USART1)
+	{
+	  extern osThreadId_t UART1TaskHandle;    // from freertos.c
+	  vTaskNotifyGiveFromISR (UART1TaskHandle, NULL);
+//	  bsp_led_toggle (LED_RED);
 
-    goto End_Of_HAL_UART_TxCpltCallback;
-  }
-  if (huart->Instance == USART6) {
+	  goto End_Of_HAL_UART_TxCpltCallback;
+	}
+  if (huart->Instance == USART6)
+	{
+	  extern osThreadId_t UART6TaskHandle;    // from freertos.c
+	  vTaskNotifyGiveFromISR (UART6TaskHandle, NULL);
+//	  bsp_led_toggle (LED_RED);
+	  goto End_Of_HAL_UART_TxCpltCallback;
+	}
 
-    goto End_Of_HAL_UART_TxCpltCallback;
-  }
-
-End_Of_HAL_UART_TxCpltCallback:
+  End_Of_HAL_UART_TxCpltCallback:
   taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus);
 }
 
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
+{
   UBaseType_t uxSavedInterruptStatus;
   uxSavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
 
-  if (huart->Instance == USART3) {
-    // todo add RC_DECODE
-    goto End_Of_HAL_UARTEx_RxEventCallback;
-  }
-  if (huart->Instance == USART1) {
+  if (huart->Instance == USART3)
+	{
+	  // todo add RC_DECODE
+	  goto End_Of_HAL_UARTEx_RxEventCallback;
+	}
+  if (huart->Instance == USART1)
+	{
+	  bsp_uart1_start_idle_dma_rx ();
+	  goto End_Of_HAL_UARTEx_RxEventCallback;
+	}
+  if (huart->Instance == USART6)
+	{
+	  bsp_led_toggle (LED_GREEN);
+	  bsp_uart6_start_idle_dma_rx ();
+	  goto End_Of_HAL_UARTEx_RxEventCallback;
+	}
 
-    goto End_Of_HAL_UARTEx_RxEventCallback;
-  }
-  if (huart->Instance == USART6) {
-
-    goto End_Of_HAL_UARTEx_RxEventCallback;
-  }
-
-End_Of_HAL_UARTEx_RxEventCallback:
+  End_Of_HAL_UARTEx_RxEventCallback:
   taskEXIT_CRITICAL_FROM_ISR(uxSavedInterruptStatus);
 }

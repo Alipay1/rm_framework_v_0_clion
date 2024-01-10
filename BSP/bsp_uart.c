@@ -6,108 +6,98 @@
 #include "stdarg.h"
 #include "stddef.h"
 #include "stdio.h"
+#include "usart.h"
+
+extern DMA_HandleTypeDef hdma_usart1_tx;
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart6_rx;
+extern DMA_HandleTypeDef hdma_usart6_tx;
 
 static uint8_t UART1_MESSAGE_BUFFER[MESSAGE_BUFFER_SIZE] = {0};
 static StaticMessageBuffer_t UART1_SMB_STRUCT = {0};
 MessageBufferHandle_t UART1_MB_HANDLE = {0};
+static char bsp_uart1_rx_buf[MESSAGE_BUFFER_SIZE] = {0};
 
 static uint8_t UART6_MESSAGE_BUFFER[MESSAGE_BUFFER_SIZE] = {0};
 static StaticMessageBuffer_t UART6_SMB_STRUCT = {0};
 MessageBufferHandle_t UART6_MB_HANDLE = {0};
+static char bsp_uart6_rx_buf[MESSAGE_BUFFER_SIZE] = {0};
 
-int bsp_uart_init(void) {
+HAL_StatusTypeDef bsp_uart1_start_idle_dma_rx (void)
+{
+  HAL_StatusTypeDef ret = HAL_ERROR;
+  ret = HAL_UARTEx_ReceiveToIdle_DMA (&huart1, (uint8_t *) bsp_uart1_rx_buf, MESSAGE_BUFFER_SIZE);
+  __HAL_DMA_DISABLE_IT (&hdma_usart1_rx, DMA_IT_HT);
+  return ret;
+}
+HAL_StatusTypeDef bsp_uart6_start_idle_dma_rx (void)
+{
+  HAL_StatusTypeDef ret = HAL_ERROR;
+  ret = HAL_UARTEx_ReceiveToIdle_DMA (&huart6, (uint8_t *) bsp_uart6_rx_buf, MESSAGE_BUFFER_SIZE);
+  __HAL_DMA_DISABLE_IT (&hdma_usart6_rx, DMA_IT_HT);
+  return ret;
+}
+
+int bsp_uart_init (void)
+{
+  /*start idle dma receiving & disable some interrupt*/
+  HAL_StatusTypeDef uart1_ret = HAL_ERROR;
+  HAL_StatusTypeDef uart6_ret = HAL_ERROR;
+  uart1_ret = bsp_uart1_start_idle_dma_rx ();
+  uart6_ret = bsp_uart6_start_idle_dma_rx ();
+
+  /*register the tx message buffer*/
+  /*!MUST CALL BEFORE ANY TX OPERATIONS (exp. bsp_printf)*/
   UART1_MB_HANDLE = xMessageBufferCreateStatic(
-      MESSAGE_BUFFER_SIZE, UART1_MESSAGE_BUFFER, &UART1_SMB_STRUCT);
+	  MESSAGE_BUFFER_SIZE, UART1_MESSAGE_BUFFER, &UART1_SMB_STRUCT);
   UART6_MB_HANDLE = xMessageBufferCreateStatic(
-      MESSAGE_BUFFER_SIZE, UART6_MESSAGE_BUFFER, &UART6_SMB_STRUCT);
+	  MESSAGE_BUFFER_SIZE, UART6_MESSAGE_BUFFER, &UART6_SMB_STRUCT);
 
-  if (!UART1_MB_HANDLE || !UART6_MB_HANDLE) {
-    return BSP_UART_OPT_FAIL;
-  }
+  /*if handles are empty or HAL_STATUS wrong then return fail*/
+  if (!UART1_MB_HANDLE || !UART6_MB_HANDLE ||
+	  uart1_ret != HAL_OK || uart6_ret != HAL_OK)
+	{
+	  return BSP_UART_OPT_FAIL;
+	}
   return BSP_UART_OPT_SUCCESS;
 }
 
-int bsp_u1_printf(const char *fmt, ...) {
+int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...)
+{
   va_list args;
   static char buffer[MESSAGE_BUFFER_SIZE / 4]; // 临时缓冲区
   int written; // vsnprintf 返回写入的字符数
+  MessageBufferHandle_t *private_message_buf_handle = NULL;
+  switch (UARTx)
+	{
+	  default:
 
-  // 初始化变量参数列表
+	  case BSP_UART1: private_message_buf_handle = &UART1_MB_HANDLE;
+	  break;
+
+	  case BSP_UART6: private_message_buf_handle = &UART6_MB_HANDLE;
+	  break;
+	}
+
   va_start(args, fmt);
-
-  // 将数据格式化输出到缓冲区, 保留一个字符的空间用于 '\0'
-  written = vsnprintf(buffer, MESSAGE_BUFFER_SIZE / 4, fmt, args);
-
-  // 清理变量参数列表
+  written = vsnprintf (buffer, MESSAGE_BUFFER_SIZE / 4, fmt, args);
   va_end(args);
 
-  if (written > 0) {
-    // 如果有数据被写入到buffer中
-    if (xMessageBufferSend(UART1_MB_HANDLE, buffer, written, 1) != written) {
-      return -1;
-    }
-    // 也许你还需要处理FIFO已满或者其他错误的情况
-  }
+  if (written > 0)
+	{
+	  // 如果有数据被写入到buffer中
+	  while (xMessageBufferSend(*private_message_buf_handle, buffer, written, 0) != written);
+	  // 也许你还需要处理FIFO已满或者其他错误的情况
+	}
   return written;
 }
 
-// static UART_FIFO_t UART1_FIFO = {0};
-// static UART_FIFO_t UART6_FIFO = {0};
-//
-// uint32_t bsp_get_uart_fifo_len(void) { return CONFIG_UART_FIFO_LENTH; }
-//
-// UART_FIFO_t *bsp_get_uart_fifo_p(int uart_num) {
-//   switch (uart_num) {
-//   case 1:
-//     return &UART1_FIFO;
-//   case 6:
-//     return &UART6_FIFO;
-//   default:
-//     return NULL;
-//   }
-// }
-//
-// uint32_t bsp_get_uart_fifo_head(UART_FIFO_t *FIFO) { return FIFO->head; }
-// uint32_t bsp_get_uart_fifo_tail(UART_FIFO_t *FIFO) { return FIFO->tail; }
-// uint32_t bsp_get_uart_fifo_cnt(UART_FIFO_t *FIFO) { return FIFO->count; }
-//
-// int bsp_uart_fifo_write(UART_FIFO_t *FIFO, char src) {
-//   if (FIFO->count >= CONFIG_UART_FIFO_LENTH) {
-//     return BSP_UART_FIFO_FULL;
-//   }
-//
-//   FIFO->buffer[FIFO->tail] = src;
-//   FIFO->tail++;
-//   FIFO->count++;
-//   return BSP_UART_FIFO_WRITE_SUCCESS;
-// }
-//
-// int bsp_uart_fifo_write_mult(UART_FIFO_t *FIFO, const char *data, int
-// len) {
-//   if (!FIFO || !data)
-//     return BSP_UART_FIFO_NULL_PTR; // Check for NULL pointers
-//
-//   int bytesWritten = 0;
-//
-//   // Loop over each byte of data
-//   for (int i = 0; i < len; i++) {
-//     // Check if the FIFO is full
-//     if (FIFO->count == CONFIG_UART_FIFO_LENTH) {
-//       break; // FIFO is full, stop writing
-//     }
-//
-//     // Write the data byte into the FIFO
-//     FIFO->buffer[FIFO->tail] = data[i];
-//
-//     // Move the tail pointer forward
-//     FIFO->tail = (FIFO->tail + 1) % CONFIG_UART_FIFO_LENTH;
-//
-//     // Increment the count of items in the FIFO
-//     FIFO->count++;
-//
-//     // Increment the number of bytes written
-//     bytesWritten++;
-//   }
-//
-//   return bytesWritten; // Return the number of bytes written
-// }
+const char *bsp_get_uart1_rx_buf (void)
+{
+  return bsp_uart1_rx_buf;
+}
+const char *bsp_get_uart6_rx_buf (void)
+{
+  return bsp_uart6_rx_buf;
+}
