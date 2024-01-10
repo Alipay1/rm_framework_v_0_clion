@@ -66,9 +66,9 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 4;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 1.0F; /*5 6020 no.1*/
-  (pid_speed_struct + i)->Ki = 0.0F;
-  (pid_speed_struct + i)->Kd = 0.01F;
+  (pid_speed_struct + i)->Kp = 170.0F; /*5 6020 no.1*/
+  (pid_speed_struct + i)->Ki = 7.0F;
+  (pid_speed_struct + i)->Kd = 0.0F;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
@@ -106,7 +106,7 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 8;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 1; /*9 motor5 6020 no.1 position*/
+  (pid_speed_struct + i)->Kp = 0.001; /*9 motor5 6020 no.1 position*/
   (pid_speed_struct + i)->Ki = 0;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 300;
@@ -179,41 +179,41 @@ int PID_Calculate (void)
 
   /*reset motinfo to motor 5 (first 6020)*/
   /*calculate PID position first*/
-//  for (int i = 8; i < PID_SPEED_STRUCT_NUM;)
-//	{
-//
-//	  (pid_speed_struct + i)->actual = (float) (motinfo + i - 4)->total_ecd;
-//
-//	  if ((pid_speed_struct + i)->active == true)
-//		{
-//		  if ((pid_speed_struct + i)->Error == 0)
-//			{
-//
-//			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
-//			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
-//
-//			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
-//			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
-//			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
-//											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
-//												+ (pid_speed_struct + i)->err_last_last);
-//
-//			  (pid_speed_struct + i)->output =
-//				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
-//			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
-//			  PID_Out_Limit (pid_speed_struct + i);
-//
-//			  /*give PID speed target value*/
-//			  //todo 添加自由控制双环开启状态的宏
-//			  (pid_speed_struct + i - 4)->ideal =
-//				  (pid_speed_struct + i)->output;
-//			}
-//		}
-//	  motinfo++;
-//	  i++;
-//	}
+  for (int i = 8; i < PID_SPEED_STRUCT_NUM;)
+	{
 
-  for (int i = 0; i < PID_SPEED_STRUCT_NUM;)
+	  (pid_speed_struct + i)->actual = (float) (motinfo + i - 4)->total_ecd;
+
+	  if ((pid_speed_struct + i)->active == true)
+		{
+		  if ((pid_speed_struct + i)->Error == 0)
+			{
+
+			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
+			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
+
+			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
+			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
+			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
+											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
+												+ (pid_speed_struct + i)->err_last_last);
+
+			  (pid_speed_struct + i)->output =
+				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
+			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
+			  PID_Out_Limit (pid_speed_struct + i);
+
+			  /*give PID speed target value*/
+			  //todo 添加自由控制双环开启状态的宏
+			  (pid_speed_struct + i - 4)->ideal =
+				  (pid_speed_struct + i)->output;
+			}
+		}
+	  motinfo++;
+	  i++;
+	}
+
+  for (int i = 0; i < PID_SPEED_STRUCT_NUM - 4;)
 	{
 	  (pid_speed_struct + i)->actual = get_measure_pointer (i)->speed_rpm;
 
@@ -295,7 +295,7 @@ int pid_sscanf (char *input)
 		  &Kd);
 
   /*if motor num over the limit return*/
-  if (motor_num > 7 || motor_num < 0)
+  if (motor_num > 11 || motor_num < 0)
 	{
 	  return -1;
 	}
