@@ -18,7 +18,7 @@ float abs_f (float value)
 	}
 }
 
-static PID pid_speed_struct[PID_SPEED_STRUCT_NUM] = {0};
+__attribute__ ((section(".ccmram"))) static PID pid_speed_struct[PID_SPEED_STRUCT_NUM] = {0};
 
 int PID_Setup (void)
 {

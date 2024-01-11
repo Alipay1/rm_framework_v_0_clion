@@ -33,6 +33,8 @@
 
 #include "bsp.h"
 #include "app_rc.h"
+#include "ins_task.h"
+#include "bsp_dwt.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -127,7 +129,12 @@ int main (void)
   remote_control_init ();
   bsp_led_init ();
   bsp_buz_init ();
+  bsp_buz_apply_frequency (83);
   HAL_TIM_Base_Start_IT (&htim7);
+  while (BMI088_init (&hspi1, 1) != BMI088_NO_ERROR);
+  DWT_Init (168);
+  INS_Init ();
+  bsp_buz_mute ();
   /* USER CODE END 2 */
 
   /* Init scheduler */

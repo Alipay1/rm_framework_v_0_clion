@@ -9,10 +9,11 @@
 !README.md
 !USER_GUIDE.md
 
-!/Src/*.*
-!/Inc/*.*
-!/BSP/*.*
-!/APP/*.*
+!/Src/**
+!/Inc/**
+!/BSP/**
+!/APP/**
+!/INS/**
 
 
 !/*.ld

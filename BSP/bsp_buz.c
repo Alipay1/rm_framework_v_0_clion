@@ -50,12 +50,10 @@ int bsp_buz_set_major (bsp_buz_major_e major)
 
 int bsp_buz_apply_frequency (int frequency)
 {
-  uint32_t apb1ClockFreq = HAL_RCC_GetPCLK1Freq (); // 获取 APB1 时钟频率
-  uint32_t timClockFreq = apb1ClockFreq * 2;      // 定时器时钟频率
+  htim4.Instance->PSC = psc_table[frequency]; // 更新预分频器
+  htim4.Instance->ARR = arr_table[frequency];     // 更新自动重装载寄存器
 
-  uint32_t psc = 0;
-  uint32_t arr = UINT16_MAX + 1;
-
+  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, arr_table[frequency] / 16);
   return frequency;
 }
 
@@ -84,4 +82,13 @@ int bsp_buz_set_pitch (bsp_buz_tone_e tone)
   __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, arr_table[targetNoteMidi] / 16);
 
   return bsp_buz_apply_frequency (frequency);
+}
+
+void bsp_buz_mute (void)
+{
+  HAL_TIM_PWM_Stop (&htim4, TIM_CHANNEL_3);
+}
+void bsp_buz_start (void)
+{
+  HAL_TIM_PWM_Start (&htim4, TIM_CHANNEL_3);
 }

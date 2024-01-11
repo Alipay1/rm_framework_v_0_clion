@@ -43,6 +43,7 @@
 
 #include "event_groups.h"
 #include "semphr.h"
+#include "ins_task.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedParameter"
@@ -240,6 +241,11 @@ const osEventFlagsAttr_t STEP_RESPON_GLOBAL_VARIABLE_attributes = {
 	.cb_mem = &STEP_RESPON_GLOBAL_VARIABLEControlBlock,
 	.cb_size = sizeof (STEP_RESPON_GLOBAL_VARIABLEControlBlock),
 };
+/* Definitions for Key_e */
+osEventFlagsId_t Key_eHandle;
+const osEventFlagsAttr_t Key_e_attributes = {
+	.name = "Key_e"
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -361,6 +367,9 @@ void MX_FREERTOS_Init (void)
   /* creation of STEP_RESPON_GLOBAL_VARIABLE */
   STEP_RESPON_GLOBAL_VARIABLEHandle = osEventFlagsNew (&STEP_RESPON_GLOBAL_VARIABLE_attributes);
 
+  /* creation of Key_e */
+  Key_eHandle = osEventFlagsNew (&Key_e_attributes);
+
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
@@ -381,6 +390,7 @@ void StartINSTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
+	  INS_Task ();
 	  osDelay (1);
 	}
   /* USER CODE END StartINSTask */
@@ -423,23 +433,34 @@ void StartBUZTask (void *argument)
   for (;;)
 	{
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_MI);
-//	  osDelay (333);
+//	  osDelay (666);
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_RE);
 //	  osDelay (333);
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_DO);
-//	  osDelay (333 * 2);
+//	  osDelay (666);
 //
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_RE);
-//	  osDelay (333);
+//	  osDelay (166);
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_MI);
-//	  osDelay (333 * 2);
+//	  osDelay (333);
 //
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_FA);
 //	  osDelay (333);
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_MI);
-//	  osDelay (333);
+//	  osDelay (166);
 //	  bsp_buz_set_pitch (BSP_BUZ_TONE_RE);
-	  osDelay (333 * 2);
+//	  osDelay (333 * 2);
+
+//	  bsp_buz_set_pitch (BSP_BUZ_TONE_RE);
+
+//	  bsp_buz_start ();
+//	  bsp_buz_apply_frequency (77);
+//	  osDelay (400);
+//	  bsp_buz_apply_frequency (83);
+//	  osDelay (550);
+	  bsp_buz_mute ();
+	  osDelay (1000);
+
 	}
   /* USER CODE END StartBUZTask */
 }
@@ -471,7 +492,8 @@ void StartCANTask (void *argument)
 	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
 	  PID_Calculate ();
 
-	  bsp_printf (BSP_UART6, "psc:%d\r\narr:%d\r\n", htim4.Instance->PSC, htim4.Instance->ARR);
+	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
+//	  bsp_printf (BSP_UART6, "psc:%d\r\narr:%d\r\n", htim4.Instance->PSC, htim4.Instance->ARR);
 //	  bsp_printf (BSP_UART6, "tone:%d\r\n", bsp_buz_set_pitch (BSP_BUZ_TONE_DO));
 //	  bsp_printf (BSP_UART6, "addr:%p\r\n", wheel0);
 //	  bsp_printf (BSP_UART6, "total_ecd:%d\r\n", motor0_pos->total_ecd);
@@ -704,6 +726,7 @@ void StartMOTOR_TEMPTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
+	  //todo 添加温度监控任务
 	  osDelay (1000);
 	}
   /* USER CODE END StartMOTOR_TEMPTask */

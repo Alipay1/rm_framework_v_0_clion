@@ -59,12 +59,18 @@ include_directories(CMSIS-DSP/Include CMSIS-DSP/PrivateInclude)
 #BSP
 include_directories(BSP)
 include_directories(APP)
+include_directories(INS)
+include_directories(INS/Components)
+include_directories(INS/Components/Algorithm)
+include_directories(INS/Components/Controller)
+include_directories(INS/Components/Devices)
 
 add_definitions(${defines})
 
 file(GLOB_RECURSE SOURCES ${sources}
-"BSP/*.c"
-"APP/*.c")
+"BSP/*.*"
+"APP/*.*"
+"INS/*.*")
 
 set(LINKER_SCRIPT $${CMAKE_SOURCE_DIR}/${linkerScript})
 

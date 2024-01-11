@@ -31,5 +31,7 @@ int bsp_buz_init_pitch (void);
 int bsp_buz_set_major (bsp_buz_major_e major);
 int bsp_buz_apply_frequency (int frequency);
 int bsp_buz_set_pitch (bsp_buz_tone_e tone);
+void bsp_buz_mute (void);
+void bsp_buz_start (void);
 
 #endif //BSP_BUZ_H_
