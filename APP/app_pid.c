@@ -160,7 +160,6 @@ PID IMU_T = {
 	.Limit_Out = 30000,
 	.Error = 0};
 
-//__attribute__ ((section(".ccmram")))
 void PID_Out_Limit (PID *pxStruct)
 {
   // 限制积分值的范围
@@ -172,7 +171,6 @@ void PID_Out_Limit (PID *pxStruct)
   pxStruct->output = (pxStruct->output < -pxStruct->Limit_Out) ? -pxStruct->Limit_Out : pxStruct->output;
 }
 
-//__attribute__ ((section(".ccmram")))
 int PID_Calculate (void)
 {
   motor_measure_t *motinfo = (motor_measure_t *) get_measure_pointer (0);

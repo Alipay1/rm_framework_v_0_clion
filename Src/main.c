@@ -125,6 +125,8 @@ int main (void)
   bsp_uart_init ();
   CAN_FilterSetup ();
   remote_control_init ();
+  bsp_led_init ();
+  bsp_buz_init ();
   HAL_TIM_Base_Start_IT (&htim7);
   /* USER CODE END 2 */
 

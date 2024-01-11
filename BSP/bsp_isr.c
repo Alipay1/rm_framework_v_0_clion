@@ -55,11 +55,6 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
   UBaseType_t uxSavedInterruptStatus;
   uxSavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
 
-  if (huart->Instance == USART3)
-	{
-	  // todo add RC_DECODE
-	  goto End_Of_HAL_UARTEx_RxEventCallback;
-	}
   if (huart->Instance == USART1)
 	{
 	  extern osThreadId_t UART1RxTaskHandle;    // from freertos.c
