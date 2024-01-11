@@ -10,7 +10,7 @@ static CAN_TxHeaderTypeDef hcan2_tx_header;
 static uint8_t hcan1_message[8];
 static uint8_t hcan2_message[8];
 
-static motor_measure_t MotorInfo[8];
+static motor_measure_t MotorInfo[BSP_CAN_TOTAL_MORTOR_COUNT];
 
 chassis_transported_controller_data rc_ctcd = {0};
 

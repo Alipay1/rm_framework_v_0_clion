@@ -723,11 +723,41 @@ void StartUART1RxTask (void *argument)
 void StartMOTOR_TEMPTask (void *argument)
 {
   /* USER CODE BEGIN StartMOTOR_TEMPTask */
+  motor_measure_t *motor = get_measure_pointer (0);
+  uint8_t temperature[BSP_CAN_TOTAL_MORTOR_COUNT] = {0};
+  uint8_t temp = 0;
   /* Infinite loop */
   for (;;)
 	{
-	  //todo 添加温度监控任务
-	  osDelay (1000);
+	  /*reset temp to 0*/
+	  temp = 0;
+
+	  /*collect temperature together*/
+	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
+		{
+		  temperature[i] = (motor + i)->temperate;
+		  i++;
+		}
+
+	  /*find max temperature*/
+	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
+		{
+		  if (temperature[i] > temp)
+			{
+			  temp = temperature[i];
+			}
+		  i++;
+		}
+
+	  /*configMOTOR_ALARM_TEMPERATURE defined in main.h*/
+	  if (temp >= configMOTOR_ALARM_TEMPERATURE)
+		{
+		  //todo call somthing safer to alarm
+		  __disable_irq ();
+		  while (1);
+		}
+
+	  osDelay (100);
 	}
   /* USER CODE END StartMOTOR_TEMPTask */
 }
