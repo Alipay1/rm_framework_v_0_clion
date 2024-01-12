@@ -86,7 +86,7 @@ void Error_Handler(void);
 #define CS1_GYRO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-#define configMOTOR_ALARM_TEMPERATURE (80)
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

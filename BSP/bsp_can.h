@@ -12,8 +12,6 @@ extern CAN_HandleTypeDef hcan2;
 #define PITCH_MOTOR_NUM 4 /*从零计数所以是第五个*/
 #define YAW_MOTOR_NUM 5   /*从零计数所以是第六个*/
 
-#define BSP_CAN_TOTAL_MORTOR_COUNT 8
-
 #define MOUSE_FREQ 200
 #define MOUSE_PERIOD (float)(1 / MOUSE_FREQ)
 

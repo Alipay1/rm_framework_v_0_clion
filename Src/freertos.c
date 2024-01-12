@@ -44,7 +44,6 @@
 #include "event_groups.h"
 #include "semphr.h"
 #include "ins_task.h"
-#include "app_rc.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedParameter"
@@ -111,7 +110,7 @@ const osThreadAttr_t BUZTask_attributes = {
 };
 /* Definitions for CANTask */
 osThreadId_t CANTaskHandle;
-uint32_t CANTaskBuffer[4096];
+uint32_t CANTaskBuffer[2048];
 osStaticThreadDef_t CANTaskControlBlock;
 const osThreadAttr_t CANTask_attributes = {
 	.name = "CANTask",
@@ -411,7 +410,7 @@ void StartLEDTask (void *argument)
   for (;;)
 	{
 //	  bsp_led_blink (LED_RED);
-	  bsp_led_blink (LED_GREEN);
+//	  bsp_led_blink (LED_GREEN);
 //	  bsp_led_blink (LED_BLUE);
 //	  bsp_led_toggle (LED_GREEN);
 	  osDelay (pdMS_TO_TICKS(1000));
@@ -481,60 +480,26 @@ void StartCANTask (void *argument)
   char buf[128] = {0};
   int str_len = 0;
 
-  const RC_ctrl_t *RC = get_remote_control_point ();
-
   PID_Setup ();
-
   PID *wheel0 = pid_get_struct_pointer (0, NORMAL_MOTOR);
-  PID *wheel1 = pid_get_struct_pointer (1, NORMAL_MOTOR);
-  PID *wheel2 = pid_get_struct_pointer (2, NORMAL_MOTOR);
-  PID *wheel3 = pid_get_struct_pointer (3, NORMAL_MOTOR);
-
-  extern motor_measure_t MotorInfo[BSP_CAN_TOTAL_MORTOR_COUNT];
-
   PID *servo0_pos = pid_get_struct_pointer (4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
   PID *servo0_spd = pid_get_struct_pointer (4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  volatile motor_measure_t *motor4 = get_measure_pointer (4);
-
-  PID *servo1_pos = pid_get_struct_pointer (5 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  PID *servo1_spd = pid_get_struct_pointer (5, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  volatile motor_measure_t *motor5 = get_measure_pointer (5);
-
-  PID *servo2_pos = pid_get_struct_pointer (6 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  PID *servo2_spd = pid_get_struct_pointer (6, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  volatile motor_measure_t *motor6 = get_measure_pointer (6);
-
-  PID *servo3_pos = pid_get_struct_pointer (7 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  PID *servo3_spd = pid_get_struct_pointer (7, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  volatile motor_measure_t *motor7 = get_measure_pointer (7);
+  motor_measure_t *motor0 = get_measure_pointer (4);
   /* Infinite loop */
   for (;;)
 	{
 
 	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
-	  servo1_pos->ideal = get_bsp_pid_step_response_target ();
-	  servo2_pos->ideal = get_bsp_pid_step_response_target ();
-	  servo3_pos->ideal = get_bsp_pid_step_response_target ();
-
-	  wheel0->ideal = 5 * RC->rc.ch[0];
-	  wheel1->ideal = 5 * RC->rc.ch[0];
-	  wheel2->ideal = 5 * RC->rc.ch[0];
-	  wheel3->ideal = 5 * RC->rc.ch[0];
-//	  servo0_pos->actual = (float) motor4->total_ecd;
-//	  servo1_pos->actual = (float) motor5->total_ecd;
-//	  servo2_pos->actual = (float) motor6->total_ecd;
-//	  servo3_pos->actual = (float) motor7->total_ecd;
-
 	  PID_Calculate ();
 
-	  bsp_printf (BSP_UART1, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
+	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
 //	  bsp_printf (BSP_UART6, "psc:%d\r\narr:%d\r\n", htim4.Instance->PSC, htim4.Instance->ARR);
 //	  bsp_printf (BSP_UART6, "tone:%d\r\n", bsp_buz_set_pitch (BSP_BUZ_TONE_DO));
 //	  bsp_printf (BSP_UART6, "addr:%p\r\n", wheel0);
 //	  bsp_printf (BSP_UART6, "total_ecd:%d\r\n", motor0_pos->total_ecd);
 //	  bsp_printf (BSP_UART6, "run:%d\r\nkp:%f\r\nki:%f\r\nkd:%f\r\n", wheel0->active ? 1 : 0,
 //				  wheel0->Kp, wheel0->Ki, wheel0->Kd);
-//	  bsp_printf (BSP_UART1, "%f,%f,%f,%f,%f,%f,%d\r\n",
+//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f,%f,%f,%d\r\n",
 //				  servo0_pos->ideal,
 //				  servo0_pos->actual,
 //				  servo0_pos->output,
@@ -542,47 +507,17 @@ void StartCANTask (void *argument)
 //				  servo0_spd->actual,
 //				  servo0_spd->output,
 //				  motor0->total_ecd);
-//	  bsp_printf (BSP_UART1, "%.0f,%.0f,%.0f,%.0f,%.0f\r\n",
-//				  servo0_pos->ideal,
-//				  servo0_pos->actual,
-//				  servo1_pos->actual,
-//				  servo2_pos->actual,
-//				  servo3_pos->actual);
-//	  bsp_printf (BSP_UART1, "%.0f,%.0f,%.0f,%.0f,%.0f\r\n",
-//				  servo0_pos->ideal,
-//				  1.1,
-//				  2.2,
-//				  3.3,
-//				  4.4);
-//	  bsp_printf (BSP_UART1, "%.0f,%d,%d,%d,%d\r\n",
-//				  servo0_pos->ideal,
-//				  motor4->total_ecd,
-//				  motor5->total_ecd,
-//				  motor6->total_ecd,
-//				  motor7->total_ecd);
-//	  bsp_printf (BSP_UART1, "%.0f,%d,%d,%d,%d\r\n",
-//				  5 * RC->rc.ch[0],
-//				  wheel0->ideal,
-//				  wheel1->ideal,
-//				  wheel2->ideal,
-//				  wheel3->ideal);
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
-					   (int16_t) wheel1->output,
-					   (int16_t) wheel2->output,
-					   (int16_t) wheel3->output);
-//	  CAN_SendMessage (CAN_CHANNEL_2,
-//					   MOTOR_5678,
-//					   (int16_t) (servo0_spd)->output,
-//					   (int16_t) (servo1_spd)->output,
-//					   (int16_t) (servo2_spd)->output,
-//					   (int16_t) (servo3_spd)->output);
-//	  CAN_SendMessage (CAN_CHANNEL_2,
-//					   MOTOR_5678,
-//					   (int16_t) (servo0_spd + 0)->output,
-//					   0,
-//					   0,
-//					   0);
+					   0,
+					   0,
+					   0);
+	  CAN_SendMessage (CAN_CHANNEL_1,
+					   MOTOR_5678,
+					   (int16_t) servo0_spd->output,
+					   0,
+					   0,
+					   0);
 	  vTaskDelayUntil (&xLastWakeUpTime, 1);
 	}
   /* USER CODE END StartCANTask */
@@ -616,7 +551,6 @@ void StartUART1Task (void *argument)
 	  if (rx_size)
 		{
 
-#ifdef BSP_UART_USE_DMA
 		  /*take the mutex to prevent other IO operations*/
 		  if (xSemaphoreTake(UART1_FIFO_muHandle, portMAX_DELAY) == pdTRUE)
 			{
@@ -631,14 +565,6 @@ void StartUART1Task (void *argument)
 			{
 			  xSemaphoreGive(UART1_FIFO_muHandle);
 			}
-#else
-		  if (xSemaphoreTake(UART1_FIFO_muHandle, portMAX_DELAY) == pdTRUE)
-			{
-			  HAL_UART_Transmit (&huart1, (uint8_t *) rx_data, rx_size,0xFFFF);
-			  xSemaphoreGive(UART1_FIFO_muHandle);
-			}
-#endif
-
 		}
 	  //    bsp_led_toggle(LED_GREEN);  //redundant led toggle for quick running state check
 	}
@@ -730,9 +656,9 @@ void StartSTEP_RESPONSETask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-	  set_bsp_pid_step_response_target (1000);
+	  set_bsp_pid_step_response_target (2000);
 	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
-	  set_bsp_pid_step_response_target (-1000);
+	  set_bsp_pid_step_response_target (-2000);
 	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
 	}
   /* USER CODE END StartSTEP_RESPONSETask */
@@ -797,41 +723,11 @@ void StartUART1RxTask (void *argument)
 void StartMOTOR_TEMPTask (void *argument)
 {
   /* USER CODE BEGIN StartMOTOR_TEMPTask */
-  motor_measure_t *motor = get_measure_pointer (0);
-  uint8_t temperature[BSP_CAN_TOTAL_MORTOR_COUNT] = {0};
-  uint8_t temp = 0;
   /* Infinite loop */
   for (;;)
 	{
-	  /*reset temp to 0*/
-	  temp = 0;
-
-	  /*collect temperature together*/
-	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
-		{
-		  temperature[i] = (motor + i)->temperate;
-		  i++;
-		}
-
-	  /*find max temperature*/
-	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
-		{
-		  if (temperature[i] > temp)
-			{
-			  temp = temperature[i];
-			}
-		  i++;
-		}
-
-	  /*configMOTOR_ALARM_TEMPERATURE defined in main.h*/
-	  if (temp >= configMOTOR_ALARM_TEMPERATURE)
-		{
-		  //todo call somthing safer to alarm
-//		  __disable_irq ();
-//		  while (1);
-		}
-
-	  osDelay (100);
+	  //todo 添加温度监控任务
+	  osDelay (1000);
 	}
   /* USER CODE END StartMOTOR_TEMPTask */
 }
