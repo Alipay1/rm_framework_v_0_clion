@@ -567,10 +567,15 @@ void StartCANTask (void *argument)
 //	  servo2_pos->ideal = DEFALT_DGR_2;
 //	  servo3_pos->ideal = DEFALT_DGR_3;
 
-	  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav->theta[0] * 57.2957795130823F);
-	  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav->theta[1] * 57.2957795130823F);
-	  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav->theta[2] * 57.2957795130823F);
-	  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav->theta[3] * 57.2957795130823F);
+//	  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav->theta[0] * 57.2957795130823F);
+//	  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav->theta[1] * 57.2957795130823F);
+//	  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav->theta[2] * 57.2957795130823F);
+//	  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav->theta[3] * 57.2957795130823F);
+
+//	  servo0_pos->ideal = 0 + nav->theta[0];
+//	  servo1_pos->ideal = 0 + nav->theta[1];
+//	  servo2_pos->ideal = 0 + nav->theta[2];
+//	  servo3_pos->ideal = 0 + nav->theta[3];
 
 	  PID_Calculate_seper (servo0_spd, servo0_pos);
 	  PID_Calculate_seper (servo1_spd, servo1_pos);
@@ -648,14 +653,25 @@ void StartCANTask (void *argument)
 //				  motor1->ecd,
 //				  motor2->ecd,
 //				  motor3->ecd);
-//	  print ("%d,%d,%d,%d\r\n",
-//			 motor4->ecd,
-//			 motor5->ecd,
-//			 motor6->ecd,
-//			 motor7->ecd);
-	  print ("%f,%f\r\n",
-			 get_navigation_p ()->V[0],
-			 get_navigation_p ()->theta[0]);
+	  print ("%d,%d,%d,%d\r\n",
+			 motor4->ecd,
+			 motor5->ecd,
+			 motor6->ecd,
+			 motor7->ecd);
+//	  print ("%f,%f\r\n",
+//			 get_navigation_p ()->V[0],
+//			 get_navigation_p ()->theta[0]);
+//	  print ("%f,%f,%f,%f\r\n",
+//			 get_navigation_p ()->theta[0],
+//			 get_navigation_p ()->theta[1],
+//			 get_navigation_p ()->theta[2],
+//			 get_navigation_p ()->theta[3]);
+//	  print ("%f,%f,%f,%f\r\n",
+//			 get_navigation_p ()->V[0],
+//			 get_navigation_p ()->V[1],
+//			 get_navigation_p ()->V[2],
+//			 get_navigation_p ()->V[3]);
+
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
 					   (int16_t) wheel1->output,
