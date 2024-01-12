@@ -390,7 +390,7 @@ void StartINSTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-//	  INS_Task ();
+	  INS_Task ();
 	  osDelay (1);
 	}
   /* USER CODE END StartINSTask */
@@ -411,7 +411,7 @@ void StartLEDTask (void *argument)
 	{
 //	  bsp_led_blink (LED_RED);
 //	  bsp_led_blink (LED_GREEN);
-	  bsp_led_blink (LED_BLUE);
+//	  bsp_led_blink (LED_BLUE);
 //	  bsp_led_toggle (LED_GREEN);
 	  osDelay (pdMS_TO_TICKS(1000));
 	}
@@ -492,21 +492,21 @@ void StartCANTask (void *argument)
 	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
 	  PID_Calculate ();
 
-//	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
+	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
 //	  bsp_printf (BSP_UART6, "psc:%d\r\narr:%d\r\n", htim4.Instance->PSC, htim4.Instance->ARR);
 //	  bsp_printf (BSP_UART6, "tone:%d\r\n", bsp_buz_set_pitch (BSP_BUZ_TONE_DO));
 //	  bsp_printf (BSP_UART6, "addr:%p\r\n", wheel0);
 //	  bsp_printf (BSP_UART6, "total_ecd:%d\r\n", motor0_pos->total_ecd);
 //	  bsp_printf (BSP_UART6, "run:%d\r\nkp:%f\r\nki:%f\r\nkd:%f\r\n", wheel0->active ? 1 : 0,
 //				  wheel0->Kp, wheel0->Ki, wheel0->Kd);
-	  bsp_printf (BSP_UART1, "%.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%d\r\n",
-				  servo0_pos->ideal,
-				  servo0_pos->actual,
-				  servo0_pos->output,
-				  servo0_spd->ideal,
-				  servo0_spd->actual,
-				  servo0_spd->output,
-				  motor0->total_ecd);
+//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f,%f,%f,%d\r\n",
+//				  servo0_pos->ideal,
+//				  servo0_pos->actual,
+//				  servo0_pos->output,
+//				  servo0_spd->ideal,
+//				  servo0_spd->actual,
+//				  servo0_spd->output,
+//				  motor0->total_ecd);
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
 					   0,
@@ -723,11 +723,41 @@ void StartUART1RxTask (void *argument)
 void StartMOTOR_TEMPTask (void *argument)
 {
   /* USER CODE BEGIN StartMOTOR_TEMPTask */
+  motor_measure_t *motor = get_measure_pointer (0);
+  uint8_t temperature[BSP_CAN_TOTAL_MORTOR_COUNT] = {0};
+  uint8_t temp = 0;
   /* Infinite loop */
   for (;;)
 	{
-	  //todo 添加温度监控任务
-	  osDelay (1000);
+	  /*reset temp to 0*/
+	  temp = 0;
+
+	  /*collect temperature together*/
+	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
+		{
+		  temperature[i] = (motor + i)->temperate;
+		  i++;
+		}
+
+	  /*find max temperature*/
+	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
+		{
+		  if (temperature[i] > temp)
+			{
+			  temp = temperature[i];
+			}
+		  i++;
+		}
+
+	  /*configMOTOR_ALARM_TEMPERATURE defined in main.h*/
+	  if (temp >= configMOTOR_ALARM_TEMPERATURE)
+		{
+		  //todo call somthing safer to alarm
+		  __disable_irq ();
+		  while (1);
+		}
+
+	  osDelay (100);
 	}
   /* USER CODE END StartMOTOR_TEMPTask */
 }

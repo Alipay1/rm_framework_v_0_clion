@@ -69,8 +69,7 @@ void MX_FREERTOS_Init (void);
 /* USER CODE BEGIN 0 */
 
 /*configAPPLICATION_ALLOCATED_HEAP FreeRTOS heap defined in CCMRAM*/
-//__attribute__ ((section(".ccmram")))
-uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+__attribute__ ((section(".ccmram"))) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
 
 __attribute__ ((section(".ccmram"))) uint32_t g_osRuntimeCounter = 0;
 
@@ -130,18 +129,12 @@ int main (void)
   remote_control_init ();
   bsp_led_init ();
   bsp_buz_init ();
-
-//  bsp_buz_apply_frequency (83);
-
+  bsp_buz_apply_frequency (83);
   HAL_TIM_Base_Start_IT (&htim7);
   while (BMI088_init (&hspi1, 1) != BMI088_NO_ERROR);
   DWT_Init (168);
   INS_Init ();
-
-  HAL_UART_Transmit (&huart6, (uint8_t *) "Hello World\r\n", sizeof ("Hello World\r\n"), 0xFFFF);
-  HAL_UART_Transmit (&huart1, (uint8_t *) "Hello World\r\n", sizeof ("Hello World\r\n"), 0xFFFF);
-
-//  bsp_buz_mute ();
+  bsp_buz_mute ();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -267,7 +260,7 @@ void Error_Handler (void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed (uint8_t *file, uint32_t line)
+void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line

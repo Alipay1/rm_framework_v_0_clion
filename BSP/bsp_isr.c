@@ -59,9 +59,6 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
 	{
 	  extern osThreadId_t UART1RxTaskHandle;    // from freertos.c
 	  vTaskNotifyGiveFromISR (UART1RxTaskHandle, NULL);
-
-	  pid_sscanf (bsp_get_uart1_rx_buf ());
-
 	  bsp_uart1_start_idle_dma_rx ();
 	  goto End_Of_HAL_UARTEx_RxEventCallback;
 	}
@@ -71,6 +68,7 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
 	  vTaskNotifyGiveFromISR (UART6RxTaskHandle, NULL);
 
 	  pid_sscanf (bsp_get_uart6_rx_buf ());
+	  bsp_led_toggle (LED_GREEN);
 
 	  bsp_uart6_start_idle_dma_rx ();
 	  goto End_Of_HAL_UARTEx_RxEventCallback;
@@ -87,59 +85,57 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 
   HAL_CAN_GetRxMessage (hcan, CAN_RX_FIFO0, &rx_header, rx_data);
 
-//  if (hcan->Instance == CAN1)
-//	{
-  switch (rx_header.StdId)
+  if (hcan->Instance == CAN1)
 	{
-
-	  case CAN_3508_M1_ID:
-	  case CAN_3508_M2_ID:
-	  case CAN_3508_M3_ID:
-	  case CAN_3508_M4_ID:
-
-	  case CAN_YAW_MOTOR_ID:
-	  case CAN_PIT_MOTOR_ID:
-	  case 0x207:
-	  case 0x208:
-//	  case CAN_TRIGGER_MOTOR_ID:
+	  switch (rx_header.StdId)
 		{
-		  int i = rx_header.StdId - CAN_3508_M1_ID;
-		  bsp_can_get_motor_measure (get_measure_pointer (i),
-									 rx_data);
-		  bsp_can_updateTotalAngle (i);
+
+		  case CAN_3508_M1_ID:
+		  case CAN_3508_M2_ID:
+		  case CAN_3508_M3_ID:
+		  case CAN_3508_M4_ID:
+
+		  case CAN_YAW_MOTOR_ID:
+		  case CAN_PIT_MOTOR_ID:
+		  case CAN_TRIGGER_MOTOR_ID:
+			{
+			  int i = rx_header.StdId - CAN_3508_M1_ID;
+			  bsp_can_get_motor_measure (get_measure_pointer (i),
+										 rx_data);
+			  bsp_can_updateTotalAngle (i);
 
 //			  bsp_led_toggle (LED_BLUE);
-		  break;
-		}
- 
-	  default:
-		{
-		  break;
+			  break;
+			}
+
+		  default:
+			{
+			  break;
+			}
 		}
 	}
-//	}
 
-//  if (hcan->Instance == CAN2)
-//	{
-  switch (rx_header.StdId)
+  if (hcan->Instance == CAN2)
 	{
-	  case CHASSIS_CONTROLLER:
+	  switch (rx_header.StdId)
 		{
+		  case CHASSIS_CONTROLLER:
+			{
 //			  get_rc_from_chassis(&rc_ctcd, rx_data);
-		  break;
-		}
-	  case AMMO_BOOSTER:
-		{
+			  break;
+			}
+		  case AMMO_BOOSTER:
+			{
 //			  get_ammo_booster_info (&ammo_booster_info, rx_data);
-		  break;
-		}
-	  case RC_SWITCH:
-		{
+			  break;
+			}
+		  case RC_SWITCH:
+			{
 //			  rc->rc.s[0] = rx_data[0];
 //			  rc->rc.s[1] = rx_data[1];
-		  break;
+			  break;
+			}
+		  default: break;
 		}
-	  default: break;
 	}
-//	}
 }

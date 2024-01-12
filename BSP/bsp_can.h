@@ -18,7 +18,7 @@ extern CAN_HandleTypeDef hcan2;
 #define ENCODER_MAX_VALUE 8191
 #define ENCODER_THRESHOLD (ENCODER_MAX_VALUE / 2)
 
-#define bsp_can_get_motor_measure(ptr, data)                           \
+#define bsp_can_get_motor_measure(ptr, data)                                   \
     {                                                                  \
         (ptr)->last_last_ecd = (ptr)->last_ecd;                        \
         (ptr)->last_ecd = (ptr)->ecd;                                  \
@@ -28,7 +28,7 @@ extern CAN_HandleTypeDef hcan2;
         (ptr)->temperate = (data)[6];                                  \
     }
 
-#define bsp_can_get_rc_from_chassis(ptr, data)                  \
+#define bsp_can_get_rc_from_chassis(ptr, data)                          \
     {                                                           \
         (ptr)->mouse.x = (int16_t)((data)[1] << 8 | (data)[0]); \
         (ptr)->mouse.y = (int16_t)((data)[3] << 8 | (data)[2]); \
