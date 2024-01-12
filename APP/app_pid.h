@@ -62,7 +62,7 @@ enum {
 };
 
 int PID_Setup (void);
-int PID_Calculate (void);
+int app_PID_Calculate (void);
 
 float abs_f (float value);
 
@@ -70,7 +70,8 @@ float32_t PID_PITCH_Union_Calculate (PID *pxStructV, PID *pxStructA, float absol
 float32_t PID_YAW_Union_Calculate (PID *pxStructV, PID *pxStructP, float position, bool mode);
 PID *pid_get_struct_pointer (uint32_t num, uint32_t in_array);
 int32_t get_yaw_motor_position (void);
-
+int PID_Calculate_seper (PID *input_spd, PID *input_pos);
+int PID_Calculate_single (PID *input_spd);
 int pid_sscanf (char *input);
 
 #endif //APP_PID_H_

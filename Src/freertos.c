@@ -35,6 +35,7 @@
 #include "usart.h"
 
 #include "stdio.h"
+#include <stdarg.h>
 
 #include "bsp.h"
 
@@ -44,6 +45,8 @@
 #include "event_groups.h"
 #include "semphr.h"
 #include "ins_task.h"
+#include "app_rc.h"
+#include "app_nav.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedParameter"
@@ -70,7 +73,23 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+void print (char *fmt, ...)
+{
+  uint8_t buf[128];
 
+  uint16_t len;
+  va_list ap;
+  va_start(ap, fmt);
+  len = vsnprintf ((char *) buf, 128, fmt, ap);
+  va_end(ap);
+
+  // while (flag_u1 == 1) {
+  // }
+  // HAL_UART_Transmit_DMA(&huart1, buf, len);
+
+  HAL_UART_Transmit (&huart1, buf, len, 1000);
+  // HAL_UART_Transmit_DMA(&huart1, buf, len);
+}
 /* USER CODE END Variables */
 /* Definitions for INSTask */
 osThreadId_t INSTaskHandle;
@@ -110,7 +129,7 @@ const osThreadAttr_t BUZTask_attributes = {
 };
 /* Definitions for CANTask */
 osThreadId_t CANTaskHandle;
-uint32_t CANTaskBuffer[2048];
+uint32_t CANTaskBuffer[4096];
 osStaticThreadDef_t CANTaskControlBlock;
 const osThreadAttr_t CANTask_attributes = {
 	.name = "CANTask",
@@ -481,18 +500,94 @@ void StartCANTask (void *argument)
   int str_len = 0;
 
   PID_Setup ();
+
   PID *wheel0 = pid_get_struct_pointer (0, NORMAL_MOTOR);
+  PID *wheel1 = pid_get_struct_pointer (1, NORMAL_MOTOR);
+  PID *wheel2 = pid_get_struct_pointer (2, NORMAL_MOTOR);
+  PID *wheel3 = pid_get_struct_pointer (3, NORMAL_MOTOR);
+  motor_measure_t *motor0 = get_measure_pointer (0);
+  motor_measure_t *motor1 = get_measure_pointer (1);
+  motor_measure_t *motor2 = get_measure_pointer (2);
+  motor_measure_t *motor3 = get_measure_pointer (3);
+
+  const RC_ctrl_t *RC = get_remote_control_point ();
+
   PID *servo0_pos = pid_get_struct_pointer (4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
   PID *servo0_spd = pid_get_struct_pointer (4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  motor_measure_t *motor0 = get_measure_pointer (4);
+  motor_measure_t *motor4 = get_measure_pointer (4);
+
+  PID *servo1_pos = pid_get_struct_pointer (5 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo1_spd = pid_get_struct_pointer (5, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  motor_measure_t *motor5 = get_measure_pointer (5);
+
+  PID *servo2_pos = pid_get_struct_pointer (6 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo2_spd = pid_get_struct_pointer (6, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  motor_measure_t *motor6 = get_measure_pointer (6);
+
+  PID *servo3_pos = pid_get_struct_pointer (7 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo3_spd = pid_get_struct_pointer (7, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  motor_measure_t *motor7 = get_measure_pointer (7);
+
+  app_nav_t *nav = get_navigation_p ();
+
   /* Infinite loop */
   for (;;)
 	{
 
-	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
-	  PID_Calculate ();
+//	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
+//	  servo1_pos->ideal = get_bsp_pid_step_response_target ();
+//	  servo2_pos->ideal = get_bsp_pid_step_response_target ();
+//	  servo3_pos->ideal = get_bsp_pid_step_response_target ();
 
-	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
+
+//	  servo0_pos->ideal = SERVO0_INITIAL_POS
+//						  + map_angle_to_2_13 (find_close_val (
+//							  get_navi_struct_p ()->vector.direction_dgr - 45 + 180, 360));
+//	  servo1_pos->ideal = SERVO1_INITIAL_POS
+//						  + map_angle_to_2_13 (find_close_val (
+//							  get_navi_struct_p ()->vector.direction_dgr - 135 + 000, 360));
+//	  servo2_pos->ideal = SERVO2_INITIAL_POS
+//						  + map_angle_to_2_13 (find_close_val (
+//							  get_navi_struct_p ()->vector.direction_dgr - 225 + 180, 360));
+//	  servo3_pos->ideal = SERVO3_INITIAL_POS
+//						  + map_angle_to_2_13 (find_close_val (
+//							  get_navi_struct_p ()->vector.direction_dgr - 315 + 360, 360));
+
+	  nav_main ();
+
+//	  wheel0->ideal = get_navi_struct_p ()->vector.velocity;
+//	  wheel1->ideal = get_navi_struct_p ()->vector.velocity;
+//	  wheel2->ideal = get_navi_struct_p ()->vector.velocity;
+//	  wheel3->ideal = get_navi_struct_p ()->vector.velocity;
+
+//	  app_PID_Calculate ();
+
+//	  servo0_pos->ideal = DEFALT_DGR_0;
+//	  servo1_pos->ideal = DEFALT_DGR_1;
+//	  servo2_pos->ideal = DEFALT_DGR_2;
+//	  servo3_pos->ideal = DEFALT_DGR_3;
+
+	  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav->theta[0] * 57.2957795130823F);
+	  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav->theta[1] * 57.2957795130823F);
+	  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav->theta[2] * 57.2957795130823F);
+	  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav->theta[3] * 57.2957795130823F);
+
+	  PID_Calculate_seper (servo0_spd, servo0_pos);
+	  PID_Calculate_seper (servo1_spd, servo1_pos);
+	  PID_Calculate_seper (servo2_spd, servo2_pos);
+	  PID_Calculate_seper (servo3_spd, servo3_pos);
+
+	  PID_Calculate_single (wheel0);
+	  PID_Calculate_single (wheel1);
+	  PID_Calculate_single (wheel2);
+	  PID_Calculate_single (wheel3);
+
+//	  PID_Calculate_seper (&pid_servo0.spd, &pid_servo0.pos);
+//	  PID_Calculate_seper (&pid_servo1.spd, &pid_servo1.pos);
+//	  PID_Calculate_seper (&pid_servo2.spd, &pid_servo2.pos);
+//	  PID_Calculate_seper (&pid_servo3.spd, &pid_servo3.pos);
+
+//	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
 //	  bsp_printf (BSP_UART6, "psc:%d\r\narr:%d\r\n", htim4.Instance->PSC, htim4.Instance->ARR);
 //	  bsp_printf (BSP_UART6, "tone:%d\r\n", bsp_buz_set_pitch (BSP_BUZ_TONE_DO));
 //	  bsp_printf (BSP_UART6, "addr:%p\r\n", wheel0);
@@ -507,17 +602,84 @@ void StartCANTask (void *argument)
 //				  servo0_spd->actual,
 //				  servo0_spd->output,
 //				  motor0->total_ecd);
+//	  print ("%f,%f,%f,%f,%f,%f,%d\r\n",
+//			 servo2_pos->ideal,
+//			 servo2_pos->actual,
+//			 servo2_pos->output,
+//			 servo2_spd->ideal,
+//			 servo2_spd->actual,
+//			 servo2_spd->output,
+//			 motor2->total_ecd);
+//	  print ("%f,%f,%f,%f\r\n",
+//			 servo0_spd->output,
+//			 servo1_spd->output,
+//			 servo2_spd->output,
+//			 servo3_spd->output);
+//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f\r\n",
+//				  servo0_pos->actual,
+//				  servo1_pos->actual,
+//				  servo2_pos->actual,
+//				  servo3_pos->actual);
+//	  print ("%f,%f,%f,%f\r\n",
+//			 pid_servo0.pos.actual,
+//			 pid_servo0.pos.actual,
+//			 pid_servo0.pos.actual,
+//			 pid_servo0.pos.actual);
+//	  print ("%f,%f,%f,%f\r\n",
+//			 pid_servo0.spd.output,
+//			 pid_servo1.spd.output,
+//			 pid_servo2.spd.output,
+//			 pid_servo3.spd.output);
+//	  print ("%f,%f\r\n",
+//			 wheel2->ideal,
+//			 wheel2->actual);
+//	  print ("%f,%f,%f,%f\r\n",
+//			 wheel0->actual,
+//			 wheel1->actual,
+//			 wheel2->actual,
+//			 wheel3->actual);
+//	  print ("%f,%f,%f,%f\r\n",
+//			 wheel0->output,
+//			 wheel1->output,
+//			 wheel2->output,
+//			 wheel3->output);
+//	  bsp_printf (BSP_UART1, "%f,%f,%f,%f\r\n",
+//				  motor0->ecd,
+//				  motor1->ecd,
+//				  motor2->ecd,
+//				  motor3->ecd);
+//	  print ("%d,%d,%d,%d\r\n",
+//			 motor4->ecd,
+//			 motor5->ecd,
+//			 motor6->ecd,
+//			 motor7->ecd);
+	  print ("%f,%f\r\n",
+			 get_navigation_p ()->V[0],
+			 get_navigation_p ()->theta[0]);
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
-					   0,
-					   0,
-					   0);
-	  CAN_SendMessage (CAN_CHANNEL_1,
+					   (int16_t) wheel1->output,
+					   (int16_t) wheel2->output,
+					   (int16_t) wheel3->output);
+//	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
+//					   (int16_t) 2000,
+//					   (int16_t) 2000,
+//					   (int16_t) 2000,
+//					   (int16_t) 2000);
+	  CAN_SendMessage (CAN_CHANNEL_2,
 					   MOTOR_5678,
 					   (int16_t) servo0_spd->output,
-					   0,
-					   0,
-					   0);
+					   (int16_t) servo1_spd->output,
+					   (int16_t) servo2_spd->output,
+					   (int16_t) servo3_spd->output);
+
+//	  CAN_SendMessage (CAN_CHANNEL_1,
+//					   MOTOR_5678,
+//					   (int16_t) pid_servo0.spd.output,
+//					   (int16_t) pid_servo1.spd.output,
+//					   (int16_t) pid_servo2.spd.output,
+//					   (int16_t) pid_servo3.spd.output);
+
 	  vTaskDelayUntil (&xLastWakeUpTime, 1);
 	}
   /* USER CODE END StartCANTask */
@@ -656,9 +818,9 @@ void StartSTEP_RESPONSETask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-	  set_bsp_pid_step_response_target (2000);
+	  set_bsp_pid_step_response_target (100);
 	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
-	  set_bsp_pid_step_response_target (-2000);
+	  set_bsp_pid_step_response_target (-100);
 	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
 	}
   /* USER CODE END StartSTEP_RESPONSETask */

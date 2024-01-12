@@ -58,7 +58,11 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
   if (huart->Instance == USART1)
 	{
 	  extern osThreadId_t UART1RxTaskHandle;    // from freertos.c
+
 	  vTaskNotifyGiveFromISR (UART1RxTaskHandle, NULL);
+	  pid_sscanf (bsp_get_uart1_rx_buf ());
+	  bsp_led_toggle (LED_GREEN);
+
 	  bsp_uart1_start_idle_dma_rx ();
 	  goto End_Of_HAL_UARTEx_RxEventCallback;
 	}
@@ -94,10 +98,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 		  case CAN_3508_M2_ID:
 		  case CAN_3508_M3_ID:
 		  case CAN_3508_M4_ID:
-
-		  case CAN_YAW_MOTOR_ID:
-		  case CAN_PIT_MOTOR_ID:
-		  case CAN_TRIGGER_MOTOR_ID:
+//		  case CAN_TRIGGER_MOTOR_ID:
 			{
 			  int i = rx_header.StdId - CAN_3508_M1_ID;
 			  bsp_can_get_motor_measure (get_measure_pointer (i),
@@ -119,23 +120,25 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 	{
 	  switch (rx_header.StdId)
 		{
-		  case CHASSIS_CONTROLLER:
+		  case CAN_YAW_MOTOR_ID:
+		  case CAN_PIT_MOTOR_ID:
+		  case 0x207:
+		  case 0x208:
+//		  case CAN_TRIGGER_MOTOR_ID:
 			{
-//			  get_rc_from_chassis(&rc_ctcd, rx_data);
+			  int i = rx_header.StdId - CAN_3508_M1_ID;
+			  bsp_can_get_motor_measure (get_measure_pointer (i),
+										 rx_data);
+			  bsp_can_updateTotalAngle (i);
+
+//			  bsp_led_toggle (LED_BLUE);
 			  break;
 			}
-		  case AMMO_BOOSTER:
+
+		  default:
 			{
-//			  get_ammo_booster_info (&ammo_booster_info, rx_data);
 			  break;
 			}
-		  case RC_SWITCH:
-			{
-//			  rc->rc.s[0] = rx_data[0];
-//			  rc->rc.s[1] = rx_data[1];
-			  break;
-			}
-		  default: break;
 		}
 	}
 }

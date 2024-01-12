@@ -18,7 +18,8 @@ float abs_f (float value)
 	}
 }
 
-__attribute__ ((section(".ccmram"))) static PID pid_speed_struct[PID_SPEED_STRUCT_NUM] = {0};
+//__attribute__ ((section(".ccmram")))
+static PID pid_speed_struct[PID_SPEED_STRUCT_NUM] = {0};
 
 int PID_Setup (void)
 {
@@ -29,36 +30,36 @@ int PID_Setup (void)
   (pid_speed_struct + i)->Kp = 6.5f; /*1*/
   (pid_speed_struct + i)->Ki = 0.05f;
   (pid_speed_struct + i)->Kd = 0.001f;
-  (pid_speed_struct + i)->Limit_Iout = 15000;
-  (pid_speed_struct + i)->Limit_Out = 15000;
+  (pid_speed_struct + i)->Limit_Iout = 30000;
+  (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 1;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 5.0f; /*2*/
-  (pid_speed_struct + i)->Ki = 0.0f;
-  (pid_speed_struct + i)->Kd = 0.0f;
+  (pid_speed_struct + i)->Kp = 6.5f; /*2*/
+  (pid_speed_struct + i)->Ki = 0.05f;
+  (pid_speed_struct + i)->Kd = 0.001f;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 2;
   (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = -4000;
+  (pid_speed_struct + i)->ideal = 0;
   (pid_speed_struct + i)->Kp = 6.5f; /*3*/
-  (pid_speed_struct + i)->Ki = 0.5f;
-  (pid_speed_struct + i)->Kd = 0.0f;
-  (pid_speed_struct + i)->Limit_Iout = 16384;
-  (pid_speed_struct + i)->Limit_Out = 16384;
+  (pid_speed_struct + i)->Ki = 0.05f;
+  (pid_speed_struct + i)->Kd = 0.001f;
+  (pid_speed_struct + i)->Limit_Iout = 30000;
+  (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 3;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*4*/
-  (pid_speed_struct + i)->Ki = 0;
-  (pid_speed_struct + i)->Kd = 0;
+  (pid_speed_struct + i)->Kp = 6.5f; /*4*/
+  (pid_speed_struct + i)->Ki = 0.05f;
+  (pid_speed_struct + i)->Kd = 0.001f;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
@@ -66,7 +67,7 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 4;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 170.0F; /*5 6020 no.1*/
+  (pid_speed_struct + i)->Kp = 165.0F; /*5 6020 no.1*/
   (pid_speed_struct + i)->Ki = 7.0F;
   (pid_speed_struct + i)->Kd = 0.0F;
   (pid_speed_struct + i)->Limit_Iout = 30000;
@@ -74,30 +75,30 @@ int PID_Setup (void)
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 5;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*6*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 165.0F; /*6*/
+  (pid_speed_struct + i)->Ki = 7.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 6;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*7*/
-  (pid_speed_struct + i)->Ki = 0;
-  (pid_speed_struct + i)->Kd = 0;
+  (pid_speed_struct + i)->Kp = 165.0F; /*7*/
+  (pid_speed_struct + i)->Ki = 7.0F;
+  (pid_speed_struct + i)->Kd = 0.1F;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 7;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*8*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 165.0F; /*8*/
+  (pid_speed_struct + i)->Ki = 7.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
@@ -106,38 +107,38 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 8;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.001; /*9 motor5 6020 no.1 position*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 0.15F; /*9 motor5 6020 no.1 position*/
+  (pid_speed_struct + i)->Ki = 0.001F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 300;
   (pid_speed_struct + i)->Limit_Out = 300;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 9;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*10*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 0.15F; /*10*/
+  (pid_speed_struct + i)->Ki = 0.001F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 300;
   (pid_speed_struct + i)->Limit_Out = 300;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 10;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*11*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 0.15F; /*11*/
+  (pid_speed_struct + i)->Ki = 0.001F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 300;
   (pid_speed_struct + i)->Limit_Out = 300;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 11;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*12*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 0.15F; /*12*/
+  (pid_speed_struct + i)->Ki = 0.001F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 300;
   (pid_speed_struct + i)->Limit_Out = 300;
@@ -171,57 +172,138 @@ void PID_Out_Limit (PID *pxStruct)
   pxStruct->output = (pxStruct->output < -pxStruct->Limit_Out) ? -pxStruct->Limit_Out : pxStruct->output;
 }
 
-int PID_Calculate (void)
+int PID_Calculate_seper (PID *input_spd, PID *input_pos)
 {
+  motor_measure_t *motinfo = (motor_measure_t *) get_measure_pointer (input_spd->motor_number);
+
+  input_pos->actual = (float) motinfo->total_ecd;
+
+  if (input_pos->active == true)
+	{
+	  if (input_pos->Error == 0)
+		{
+
+		  input_pos->err = input_pos->ideal - input_pos->actual;
+		  input_pos->integral += input_pos->err;
+
+		  input_pos->Pout = input_pos->Kp * input_pos->err;
+		  input_pos->Iout = input_pos->Ki * input_pos->integral;
+		  input_pos->Dout = input_pos->Kd
+							* (input_pos->err - 2.0f * input_pos->err_last
+							   + input_pos->err_last_last);
+
+		  input_pos->output =
+			  input_pos->Pout + input_pos->Iout + input_pos->Dout;
+		  input_pos->err_last = input_pos->err;
+		  PID_Out_Limit (input_pos);
+
+		  /*give PID speed target value*/
+		  //todo 添加自由控制双环开启状态的宏
+
+		  input_spd->ideal = input_pos->output;
+		}
+	}
+  else if (input_pos->active == false)
+	{
+	  input_spd->ideal = input_pos->ideal;
+	}
+
+  input_spd->actual = motinfo->speed_rpm;
+
+  if (input_spd->active == true)
+	{
+	  if (input_spd->Error == 0)
+		{
+
+		  input_spd->err = input_spd->ideal - input_spd->actual;
+		  input_spd->integral += input_spd->err;
+
+		  input_spd->Pout = input_spd->Kp * input_spd->err;
+		  input_spd->Iout = input_spd->Ki * input_spd->integral;
+		  input_spd->Dout = input_spd->Kd
+							* (input_spd->err - 2.0f * input_spd->err_last
+							   + input_spd->err_last_last);
+
+		  input_spd->output =
+			  input_spd->Pout + input_spd->Iout + input_spd->Dout;
+		  input_spd->err_last = input_spd->err;
+		  PID_Out_Limit (input_spd);
+		}
+	}
+}
+
+int PID_Calculate_single (PID *input_spd)
+{
+  motor_measure_t *motinfo = (motor_measure_t *) get_measure_pointer (input_spd->motor_number);
+
+  input_spd->actual = motinfo->speed_rpm;
+
+  if (input_spd->active == true)
+	{
+	  if (input_spd->Error == 0)
+		{
+
+		  input_spd->err = input_spd->ideal - input_spd->actual;
+		  input_spd->integral += input_spd->err;
+
+		  input_spd->Pout = input_spd->Kp * input_spd->err;
+		  input_spd->Iout = input_spd->Ki * input_spd->integral;
+		  input_spd->Dout = input_spd->Kd
+							* (input_spd->err - 2.0f * input_spd->err_last
+							   + input_spd->err_last_last);
+
+		  input_spd->output =
+			  input_spd->Pout + input_spd->Iout + input_spd->Dout;
+		  input_spd->err_last = input_spd->err;
+		  PID_Out_Limit (input_spd);
+		}
+	}
+}
+
+int app_PID_Calculate (void)
+{
+//  motor_measure_t *motinfo = (motor_measure_t *) get_measure_pointer (0);
+//  chassis_transported_controller_data *rc_chsas = get_rc_data_from_chassis_pointer ();
+//
+//  for (int i = 0; i < 4;)
+//	{
+//	  (pid_speed_struct + i)->actual = get_measure_pointer (i)->speed_rpm;
+//
+//	  if ((pid_speed_struct + i)->active == true)
+//		{
+//		  if ((pid_speed_struct + i)->Error == 0)
+//			{
+//
+//			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
+//			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
+//
+//			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
+//			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
+//			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
+//											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
+//												+ (pid_speed_struct + i)->err_last_last);
+//
+//			  (pid_speed_struct + i)->output =
+//				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
+//			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
+//			  PID_Out_Limit (pid_speed_struct + i);
+//			}
+//		}
+//	  i++;
+//	  motinfo++;
+//	}
+//
+//  return 0;
   motor_measure_t *motinfo = (motor_measure_t *) get_measure_pointer (0);
   chassis_transported_controller_data *rc_chsas = get_rc_data_from_chassis_pointer ();
-
-
-  /*reset motinfo to motor 5 (first 6020)*/
-  /*calculate PID position first*/
-  for (int i = 8; i < PID_SPEED_STRUCT_NUM;)
+  // HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
+  for (int i = 0; i < 4;)
 	{
-
-	  (pid_speed_struct + i)->actual = (float) (motinfo + i - 4)->total_ecd;
-
 	  if ((pid_speed_struct + i)->active == true)
 		{
 		  if ((pid_speed_struct + i)->Error == 0)
 			{
-
-			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
-			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
-
-			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
-			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
-			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
-											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
-												+ (pid_speed_struct + i)->err_last_last);
-
-			  (pid_speed_struct + i)->output =
-				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
-			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
-			  PID_Out_Limit (pid_speed_struct + i);
-
-			  /*give PID speed target value*/
-			  //todo 添加自由控制双环开启状态的宏
-			  (pid_speed_struct + i - 4)->ideal =
-				  (pid_speed_struct + i)->output;
-			}
-		}
-	  motinfo++;
-	  i++;
-	}
-
-  for (int i = 0; i < PID_SPEED_STRUCT_NUM - 4;)
-	{
-	  (pid_speed_struct + i)->actual = get_measure_pointer (i)->speed_rpm;
-
-	  if ((pid_speed_struct + i)->active == true)
-		{
-		  if ((pid_speed_struct + i)->Error == 0)
-			{
-
+			  (pid_speed_struct + i)->actual = motinfo->speed_rpm;
 			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
 			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
 
@@ -240,7 +322,6 @@ int PID_Calculate (void)
 	  i++;
 	  motinfo++;
 	}
-
   return 0;
 }
 

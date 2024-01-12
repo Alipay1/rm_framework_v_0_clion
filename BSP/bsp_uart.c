@@ -69,14 +69,17 @@ int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...)
   static char buffer[MESSAGE_BUFFER_SIZE / 4]; // 临时缓冲区
   int written; // vsnprintf 返回写入的字符数
   MessageBufferHandle_t *private_message_buf_handle = NULL;
+  UART_HandleTypeDef huart = huart1;
   switch (UARTx)
 	{
 	  default:
 
 	  case BSP_UART1: private_message_buf_handle = &UART1_MB_HANDLE;
+	  huart = huart1;
 	  break;
 
 	  case BSP_UART6: private_message_buf_handle = &UART6_MB_HANDLE;
+	  huart = huart6;
 	  break;
 	}
 
@@ -89,6 +92,8 @@ int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...)
 	  // 如果有数据被写入到buffer中
 	  while (xMessageBufferSend(*private_message_buf_handle, buffer, written, 0) != written);
 	  // 也许你还需要处理FIFO已满或者其他错误的情况
+
+//	  HAL_UART_Transmit (&huart, buffer, written, 0xFFFF);
 	}
   return written;
 }
