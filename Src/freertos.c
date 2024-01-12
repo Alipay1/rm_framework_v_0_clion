@@ -572,10 +572,10 @@ void StartCANTask (void *argument)
 //	  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav->theta[2] * 57.2957795130823F);
 //	  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav->theta[3] * 57.2957795130823F);
 
-	  servo0_pos->ideal = 0 + nav->theta[0];
-	  servo1_pos->ideal = 0 + nav->theta[1];
-	  servo2_pos->ideal = 0 + nav->theta[2];
-	  servo3_pos->ideal = 0 + nav->theta[3];
+//	  servo0_pos->ideal = 0 + nav->theta[0];
+//	  servo1_pos->ideal = 0 + nav->theta[1];
+//	  servo2_pos->ideal = 0 + nav->theta[2];
+//	  servo3_pos->ideal = 0 + nav->theta[3];
 
 	  PID_Calculate_seper (servo0_spd, servo0_pos);
 	  PID_Calculate_seper (servo1_spd, servo1_pos);
