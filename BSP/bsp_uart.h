@@ -11,6 +11,7 @@
 #include "stm32f4xx_hal.h"
 
 #define MESSAGE_BUFFER_SIZE 1024
+#define BSP_UART_USE_DMA 1
 
 extern MessageBufferHandle_t UART1_MB_HANDLE;
 extern MessageBufferHandle_t UART6_MB_HANDLE;
