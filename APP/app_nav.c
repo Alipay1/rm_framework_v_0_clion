@@ -8,6 +8,8 @@
 #include "arm_math.h"
 #include "app_pid.h"
 
+#include "chassis.h"
+
 //-RC->rc.ch[2] Vy
 //RC->rc.ch[3]  Vx
 //RC->rc.ch[0]  Vw
@@ -74,10 +76,22 @@ void nav_main (void)
 	  i++;
 	}
 
-  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav.theta[0] * 57.2957795130823F * -0.5F);
-  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav.theta[1] * 57.2957795130823F * -0.5F);
-  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav.theta[2] * 57.2957795130823F * -0.5F);
-  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav.theta[3] * 57.2957795130823F * -0.5F);
+  nav.Vx *= 0.003F;
+  nav.Vy *= -0.003F;
+  nav.Vw *= -0.00001F;
+
+  chassis_vector_to_M7010_wheel_angle (nav.Vy, nav.Vx, nav.Vw, nav.theta);
+  chassis_vector_to_M3508_wheel_speed (nav.Vy, nav.Vx, nav.Vw, nav.V);
+
+  wheel0->ideal = nav.V[0];
+  wheel1->ideal = nav.V[1];
+  wheel2->ideal = nav.V[2];
+  wheel3->ideal = nav.V[3];
+//
+//  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav.theta[0] * 57.2957795130823F * -0.5F);
+//  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav.theta[1] * 57.2957795130823F * -0.5F);
+//  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav.theta[2] * 57.2957795130823F * -0.5F);
+//  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav.theta[3] * 57.2957795130823F * -0.5F);
 
 };
 
