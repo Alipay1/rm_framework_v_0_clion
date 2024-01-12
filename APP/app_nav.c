@@ -50,9 +50,9 @@ void nav_main (void)
 
   motor_measure_t *gm6020 = get_measure_pointer (4);
 
-  nav.Vx = (float) rc_ctrl.rc.ch[0];
+  nav.Vx = (float) rc_ctrl.rc.ch[3];
   nav.Vy = (float) -rc_ctrl.rc.ch[2];
-  nav.Vw = (float) rc_ctrl.rc.ch[3];
+  nav.Vw = (float) -rc_ctrl.rc.ch[0];
 
 //  float temp[4] = {0};
 //
@@ -129,9 +129,9 @@ void nav_main (void)
 //	  i++;
 //	}
 
-  nav.Vx *= 0.003F;
-  nav.Vy *= -0.003F;
-  nav.Vw *= -0.00001F;
+  nav.Vx *= 0.03F;
+  nav.Vy *= -0.03F;
+  nav.Vw *= -0.0001F;
 
   chassis_vector_to_M7010_wheel_angle (nav.Vy, nav.Vx, nav.Vw, nav.theta);
   chassis_vector_to_M3508_wheel_speed (nav.Vy, nav.Vx, nav.Vw, nav.V);

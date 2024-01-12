@@ -6,7 +6,7 @@
 
 #include "stdio.h"
 
-#define SERVO_SPD_LIM 250
+#define SERVO_SPD_LIM 50
 
 float abs_f (float value)
 {
@@ -69,8 +69,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 4;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 165.0F; /*5 6020 no.1*/
-  (pid_speed_struct + i)->Ki = 7.0F;
+  (pid_speed_struct + i)->Kp = 120.0F; /*5 6020 no.1*/
+  (pid_speed_struct + i)->Ki = 3.5F;
   (pid_speed_struct + i)->Kd = 0.0F;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
@@ -79,8 +79,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 5;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 165.0F; /*6*/
-  (pid_speed_struct + i)->Ki = 7.0F;
+  (pid_speed_struct + i)->Kp = 120.0F; /*6 6020 no.1*/
+  (pid_speed_struct + i)->Ki = 3.5F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
@@ -89,8 +89,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 6;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 165.0F; /*7*/
-  (pid_speed_struct + i)->Ki = 7.0F;
+  (pid_speed_struct + i)->Kp = 120.0F; /*7 6020 no.1*/
+  (pid_speed_struct + i)->Ki = 3.5F;
   (pid_speed_struct + i)->Kd = 0.1F;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
@@ -99,8 +99,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 7;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 165.0F; /*8*/
-  (pid_speed_struct + i)->Ki = 7.0F;
+  (pid_speed_struct + i)->Kp = 120.0F; /*8 6020 no.1*/
+  (pid_speed_struct + i)->Ki = 3.5F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;

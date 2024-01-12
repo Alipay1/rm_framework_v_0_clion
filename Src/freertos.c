@@ -577,6 +577,26 @@ void StartCANTask (void *argument)
 //	  servo2_pos->ideal = 0 + nav->theta[2];
 //	  servo3_pos->ideal = 0 + nav->theta[3];
 
+	  extern int MS7010_FL_ANGLE;   //装上去的时候Y轴正向对应的编码值(偏置角度)
+	  extern int MS7010_FR_ANGLE;
+	  extern int MS7010_BL_ANGLE;
+	  extern int MS7010_BR_ANGLE;
+	  if ((RC->rc.ch[2] != 0 || RC->rc.ch[3] != 0) && RC->rc.ch[0] != 0)
+		{
+		  wheel0->ideal = 0;
+		  wheel1->ideal = 0;
+		  wheel2->ideal = 0;
+		  wheel3->ideal = 0;
+		}
+	  else if (RC->rc.ch[2] != 0 || RC->rc.ch[3] != 0)
+		{
+		  wheel0->ideal *= -1;
+		  wheel1->ideal *= -1;
+
+		  servo2_pos->ideal += 2048;
+		  servo3_pos->ideal -= 2048;
+		}
+
 	  PID_Calculate_seper (servo0_spd, servo0_pos);
 	  PID_Calculate_seper (servo1_spd, servo1_pos);
 	  PID_Calculate_seper (servo2_spd, servo2_pos);

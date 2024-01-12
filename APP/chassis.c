@@ -75,10 +75,12 @@ fp32 vx_set, vy_set, wz_set;
 //#define MS7010_BL_ANGLE 4742
 //#define MS7010_BR_ANGLE 3401
 //
-#define MS7010_FL_ANGLE (3514 + 1024)    //装上去的时候Y轴正向对应的编码值(偏置角度)
-#define MS7010_FR_ANGLE (1714  -1024)
-#define MS7010_BL_ANGLE (3751 -1024)
-#define MS7010_BR_ANGLE (4239 +1024)
+int MS7010_FL_ANGLE = (3514 + 1024);   //装上去的时候Y轴正向对应的编码值(偏置角度)
+int MS7010_FR_ANGLE = (1714 - 1024);
+int MS7010_BL_ANGLE = (3751 - 1024);
+int MS7010_BR_ANGLE = (4239 + 1024);
+int MS7010_BL_ANGLE2 = (3751);
+int MS7010_BR_ANGLE2 = (4239);
 
 //#define DEFALT_DGR_0 3514
 //#define DEFALT_DGR_1 1714
@@ -143,17 +145,13 @@ void chassis_vector_to_M7010_wheel_angle (fp32 vx_set, fp32 vy_set, fp32 wz_set,
 	{
 	  //由于atan2算出来的结果是弧度，需转换成角度 计算公式为 弧度 * 180.f / PI 最终得到角度值 (0.707107f == 根号2)
 	  atan_angle[0] =
-		  atan ((vy_set - wz_set * cos (PI / 4)) /
-				(vx_set - wz_set * sin (PI / 4)));
+		  atan2 ((vx_set - wz_set * Radius * 0.707107f), (vy_set + wz_set * Radius * 0.707107f)) * 180.0f / PI;
 	  atan_angle[1] =
-		  atan ((vy_set - wz_set * cos (PI / 4)) /
-				(vx_set + wz_set * sin (PI / 4)));
+		  atan2 ((vx_set - wz_set * Radius * 0.707107f), (vy_set - wz_set * Radius * 0.707107f)) * 180.0f / PI;
 	  atan_angle[2] =
-		  atan ((vy_set + wz_set * cos (PI / 4)) /
-				(vx_set + wz_set * sin (PI / 4)));
+		  atan2 ((vx_set + wz_set * Radius * 0.707107f), (vy_set + wz_set * Radius * 0.707107f)) * 180.0f / PI;
 	  atan_angle[3] =
-		  atan ((vy_set + wz_set * cos (PI / 4)) /
-				(vx_set - wz_set * sin (PI / 4)));
+		  atan2 ((vx_set + wz_set * Radius * 0.707107f), (vy_set - wz_set * Radius * 0.707107f)) * 180.0f / PI;
 	}
 
   // 将一圈360°转换成编码值的一圈0-8191 -> 角度 * 8191 / 360 最终转换为需要转动的角度对应的编码值，再加上偏置角度,最终得到目标编码值
