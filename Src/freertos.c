@@ -556,42 +556,8 @@ void StartCANTask (void *argument)
 //	  servo3_pos->ideal = get_bsp_pid_step_response_target ();
 
 
-//	  servo0_pos->ideal = SERVO0_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 45 + 180, 360));
-//	  servo1_pos->ideal = SERVO1_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 135 + 000, 360));
-//	  servo2_pos->ideal = SERVO2_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 225 + 180, 360));
-//	  servo3_pos->ideal = SERVO3_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 315 + 360, 360));
 
 	  nav_main ();
-
-//	  wheel0->ideal = get_navi_struct_p ()->vector.velocity;
-//	  wheel1->ideal = get_navi_struct_p ()->vector.velocity;
-//	  wheel2->ideal = get_navi_struct_p ()->vector.velocity;
-//	  wheel3->ideal = get_navi_struct_p ()->vector.velocity;
-
-//	  app_PID_Calculate ();
-
-//	  servo0_pos->ideal = DEFALT_DGR_0;
-//	  servo1_pos->ideal = DEFALT_DGR_1;
-//	  servo2_pos->ideal = DEFALT_DGR_2;
-//	  servo3_pos->ideal = DEFALT_DGR_3;
-
-//	  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav->theta[0] * 57.2957795130823F);
-//	  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav->theta[1] * 57.2957795130823F);
-//	  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav->theta[2] * 57.2957795130823F);
-//	  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav->theta[3] * 57.2957795130823F);
-
-//	  servo0_pos->ideal = 0 + nav->theta[0];
-//	  servo1_pos->ideal = 0 + nav->theta[1];
-//	  servo2_pos->ideal = 0 + nav->theta[2];
-//	  servo3_pos->ideal = 0 + nav->theta[3];
 
 	  extern int MS7010_FL_ANGLE;   //装上去的时�?�Y轴正向对应的编码�??(偏置角度)
 	  extern int MS7010_FR_ANGLE;
@@ -622,93 +588,6 @@ void StartCANTask (void *argument)
 	  PID_Calculate_single (wheel1);
 	  PID_Calculate_single (wheel2);
 	  PID_Calculate_single (wheel3);
-
-//	  PID_Calculate_seper (&pid_servo0.spd, &pid_servo0.pos);
-//	  PID_Calculate_seper (&pid_servo1.spd, &pid_servo1.pos);
-//	  PID_Calculate_seper (&pid_servo2.spd, &pid_servo2.pos);
-//	  PID_Calculate_seper (&pid_servo3.spd, &pid_servo3.pos);
-
-//	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
-//	  bsp_printf (BSP_UART6, "psc:%d\r\narr:%d\r\n", htim4.Instance->PSC, htim4.Instance->ARR);
-//	  bsp_printf (BSP_UART6, "tone:%d\r\n", bsp_buz_set_pitch (BSP_BUZ_TONE_DO));
-//	  bsp_printf (BSP_UART6, "addr:%p\r\n", wheel0);
-//	  bsp_printf (BSP_UART6, "total_ecd:%d\r\n", motor0_pos->total_ecd);
-//	  bsp_printf (BSP_UART6, "run:%d\r\nkp:%f\r\nki:%f\r\nkd:%f\r\n", wheel0->active ? 1 : 0,
-//				  wheel0->Kp, wheel0->Ki, wheel0->Kd);
-//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f,%f,%f,%d\r\n",
-//				  servo0_pos->ideal,
-//				  servo0_pos->actual,
-//				  servo0_pos->output,
-//				  servo0_spd->ideal,
-//				  servo0_spd->actual,
-//				  servo0_spd->output,
-//				  motor0->total_ecd);
-//	  print ("%f,%f,%f,%f,%f,%f,%d\r\n",
-//			 servo2_pos->ideal,
-//			 servo2_pos->actual,
-//			 servo2_pos->output,
-//			 servo2_spd->ideal,
-//			 servo2_spd->actual,
-//			 servo2_spd->output,
-//			 motor2->total_ecd);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 servo0_spd->output,
-//			 servo1_spd->output,
-//			 servo2_spd->output,
-//			 servo3_spd->output);
-//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f\r\n",
-//				  servo0_pos->actual,
-//				  servo1_pos->actual,
-//				  servo2_pos->actual,
-//				  servo3_pos->actual);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 pid_servo0.pos.actual,
-//			 pid_servo0.pos.actual,
-//			 pid_servo0.pos.actual,
-//			 pid_servo0.pos.actual);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 pid_servo0.spd.output,
-//			 pid_servo1.spd.output,
-//			 pid_servo2.spd.output,
-//			 pid_servo3.spd.output);
-//	  print ("%f,%f\r\n",
-//			 wheel2->ideal,
-//			 wheel2->actual);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 wheel0->actual,
-//			 wheel1->actual,
-//			 wheel2->actual,
-//			 wheel3->actual);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 wheel0->output,
-//			 wheel1->output,
-//			 wheel2->output,
-//			 wheel3->output);
-//	  bsp_printf (BSP_UART1, "%f,%f,%f,%f\r\n",
-//				  motor0->ecd,
-//				  motor1->ecd,
-//				  motor2->ecd,
-//				  motor3->ecd);
-//	  print ("%d,%d,%d,%d\r\n",
-//			 motor4->ecd,
-//			 motor5->ecd,
-//			 motor6->ecd,
-//			 motor7->ecd);
-//	  print ("%f,%f\r\n",
-//			 get_navigation_p ()->V[0],
-//			 get_navigation_p ()->theta[0]);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 get_navigation_p ()->theta[0],
-//			 get_navigation_p ()->theta[1],
-//			 get_navigation_p ()->theta[2],
-//			 get_navigation_p ()->theta[3]);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 get_navigation_p ()->V[0],
-//			 get_navigation_p ()->V[1],
-//			 get_navigation_p ()->V[2],
-//			 get_navigation_p ()->V[3]);
-
-
 
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
