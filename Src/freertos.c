@@ -101,7 +101,7 @@ const osThreadAttr_t INSTask_attributes = {
 	.cb_size = sizeof (INSTaskControlBlock),
 	.stack_mem = &INSTaskBuffer[0],
 	.stack_size = sizeof (INSTaskBuffer),
-	.priority = (osPriority_t) osPriorityHigh,
+	.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LEDTask */
 osThreadId_t LEDTaskHandle;
@@ -137,7 +137,7 @@ const osThreadAttr_t CANTask_attributes = {
 	.cb_size = sizeof (CANTaskControlBlock),
 	.stack_mem = &CANTaskBuffer[0],
 	.stack_size = sizeof (CANTaskBuffer),
-	.priority = (osPriority_t) osPriorityNormal,
+	.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for UART1Task */
 osThreadId_t UART1TaskHandle;
@@ -213,6 +213,13 @@ const osThreadAttr_t MOTOR_TEMPTask_attributes = {
 	.stack_size = 256 * 4,
 	.priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for RunTimeStats */
+osThreadId_t RunTimeStatsHandle;
+const osThreadAttr_t RunTimeStats_attributes = {
+	.name = "RunTimeStats",
+	.stack_size = 512 * 4,
+	.priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for LED_q */
 osMessageQueueId_t LED_qHandle;
 const osMessageQueueAttr_t LED_q_attributes = {
@@ -282,6 +289,7 @@ void StartSTEP_RESPONSETask (void *argument);
 void StartUART6RxTask (void *argument);
 void StartUART1RxTask (void *argument);
 void StartMOTOR_TEMPTask (void *argument);
+void StartTask12 (void *argument);
 
 void MX_FREERTOS_Init (void); /* (MISRA C 2004 rule 8.1) */
 
@@ -293,7 +301,10 @@ unsigned long getRunTimeCounterValue (void);
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
 extern uint32_t g_osRuntimeCounter;/*defined in main.c(CCMRAM)*/
 __weak void configureTimerForRunTimeStats (void)
-{ g_osRuntimeCounter = 0; }
+{
+  HAL_TIM_Base_Start_IT (&htim7);
+  g_osRuntimeCounter = 0;
+}
 
 __weak unsigned long getRunTimeCounterValue (void)
 { return g_osRuntimeCounter; }
@@ -376,6 +387,9 @@ void MX_FREERTOS_Init (void)
   /* creation of MOTOR_TEMPTask */
   MOTOR_TEMPTaskHandle = osThreadNew (StartMOTOR_TEMPTask, NULL, &MOTOR_TEMPTask_attributes);
 
+  /* creation of RunTimeStats */
+  RunTimeStatsHandle = osThreadNew (StartTask12, NULL, &RunTimeStats_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -428,8 +442,10 @@ void StartLEDTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
+
+
 //	  bsp_led_blink (LED_RED);
-//	  bsp_led_blink (LED_GREEN);
+	  bsp_led_blink (LED_GREEN);
 //	  bsp_led_blink (LED_BLUE);
 //	  bsp_led_toggle (LED_GREEN);
 	  osDelay (pdMS_TO_TICKS(1000));
@@ -510,7 +526,9 @@ void StartCANTask (void *argument)
   motor_measure_t *motor2 = get_measure_pointer (2);
   motor_measure_t *motor3 = get_measure_pointer (3);
 
-  const RC_ctrl_t *RC = get_remote_control_point ();
+  extern RC_ctrl_t rc_ctrl;
+
+  RC_ctrl_t *rc = get_remote_control_point ();
 
   PID *servo0_pos = pid_get_struct_pointer (4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
   PID *servo0_spd = pid_get_struct_pointer (4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
@@ -534,73 +552,28 @@ void StartCANTask (void *argument)
   for (;;)
 	{
 
-//	  servo0_pos->ideal = get_bsp_pid_step_response_target ();
-//	  servo1_pos->ideal = get_bsp_pid_step_response_target ();
+	  servo0_pos->ideal = rc_ctrl.rc.ch[0] * 0.1F;
+	  servo1_pos->ideal = rc_ctrl.rc.ch[1] * 0.05F;
 //	  servo2_pos->ideal = get_bsp_pid_step_response_target ();
 //	  servo3_pos->ideal = get_bsp_pid_step_response_target ();
 
 
-//	  servo0_pos->ideal = SERVO0_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 45 + 180, 360));
-//	  servo1_pos->ideal = SERVO1_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 135 + 000, 360));
-//	  servo2_pos->ideal = SERVO2_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 225 + 180, 360));
-//	  servo3_pos->ideal = SERVO3_INITIAL_POS
-//						  + map_angle_to_2_13 (find_close_val (
-//							  get_navi_struct_p ()->vector.direction_dgr - 315 + 360, 360));
-
-	  nav_main ();
-
-//	  wheel0->ideal = get_navi_struct_p ()->vector.velocity;
-//	  wheel1->ideal = get_navi_struct_p ()->vector.velocity;
-//	  wheel2->ideal = get_navi_struct_p ()->vector.velocity;
-//	  wheel3->ideal = get_navi_struct_p ()->vector.velocity;
-
-//	  app_PID_Calculate ();
-
-//	  servo0_pos->ideal = DEFALT_DGR_0;
-//	  servo1_pos->ideal = DEFALT_DGR_1;
-//	  servo2_pos->ideal = DEFALT_DGR_2;
-//	  servo3_pos->ideal = DEFALT_DGR_3;
-
-//	  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav->theta[0] * 57.2957795130823F);
-//	  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav->theta[1] * 57.2957795130823F);
-//	  servo2_pos->ideal = DEFALT_DGR_2 + map_degree_to_8191 (nav->theta[2] * 57.2957795130823F);
-//	  servo3_pos->ideal = DEFALT_DGR_3 + map_degree_to_8191 (nav->theta[3] * 57.2957795130823F);
-
-//	  servo0_pos->ideal = 0 + nav->theta[0];
-//	  servo1_pos->ideal = 0 + nav->theta[1];
-//	  servo2_pos->ideal = 0 + nav->theta[2];
-//	  servo3_pos->ideal = 0 + nav->theta[3];
-
-	  extern int MS7010_FL_ANGLE;   //装上去的时候Y轴正向对应的编码值(偏置角度)
-	  extern int MS7010_FR_ANGLE;
-	  extern int MS7010_BL_ANGLE;
-	  extern int MS7010_BR_ANGLE;
-	  if ((RC->rc.ch[2] != 0 || RC->rc.ch[3] != 0) && RC->rc.ch[0] != 0)
+	  if (rc_ctrl.rc.s[0] == 3)
+		{
+		  wheel0->ideal = -6000;
+		  wheel1->ideal = 6000;
+		}
+	  else
 		{
 		  wheel0->ideal = 0;
 		  wheel1->ideal = 0;
-		  wheel2->ideal = 0;
-		  wheel3->ideal = 0;
 		}
-	  else if (RC->rc.ch[2] != 0 || RC->rc.ch[3] != 0)
-		{
-		  wheel0->ideal *= -1;
-		  wheel1->ideal *= -1;
+//	  wheel2->ideal = get_navi_struct_p ()->vector.velocity;
+//	  wheel3->ideal = get_navi_struct_p ()->vector.velocity;
 
-		  servo2_pos->ideal += 2048;
-		  servo3_pos->ideal -= 2048;
-		}
 
 	  PID_Calculate_seper (servo0_spd, servo0_pos);
 	  PID_Calculate_seper (servo1_spd, servo1_pos);
-	  PID_Calculate_seper (servo2_spd, servo2_pos);
-	  PID_Calculate_seper (servo3_spd, servo3_pos);
 
 	  PID_Calculate_single (wheel0);
 	  PID_Calculate_single (wheel1);
@@ -640,11 +613,21 @@ void StartCANTask (void *argument)
 //			 servo1_spd->output,
 //			 servo2_spd->output,
 //			 servo3_spd->output);
-//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f\r\n",
+//	  bsp_printf (BSP_UART1, "%f,%f,%f,%f\r\n",
 //				  servo0_pos->actual,
+//				  servo0_pos->ideal,
 //				  servo1_pos->actual,
-//				  servo2_pos->actual,
-//				  servo3_pos->actual);
+//				  servo1_pos->ideal);
+	  print ("%f,%f,%f,%f,%f,%f\r\n",
+			 servo1_spd->actual,
+			 servo1_spd->ideal,
+			 servo1_spd->output,
+			 servo1_pos->actual,
+			 servo1_pos->ideal,
+			 servo1_pos->output);
+//	  bsp_printf (BSP_UART6, "%d,%d\r\n",
+//				  rc_ctrl.rc.ch[0],
+//				  rc_ctrl.rc.ch[1]);
 //	  print ("%f,%f,%f,%f\r\n",
 //			 pid_servo0.pos.actual,
 //			 pid_servo0.pos.actual,
@@ -673,48 +656,31 @@ void StartCANTask (void *argument)
 //				  motor1->ecd,
 //				  motor2->ecd,
 //				  motor3->ecd);
-	  print ("%d,%d,%d,%d\r\n",
-			 motor4->ecd,
-			 motor5->ecd,
-			 motor6->ecd,
-			 motor7->ecd);
-//	  print ("%f,%f\r\n",
-//			 get_navigation_p ()->V[0],
-//			 get_navigation_p ()->theta[0]);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 get_navigation_p ()->theta[0],
-//			 get_navigation_p ()->theta[1],
-//			 get_navigation_p ()->theta[2],
-//			 get_navigation_p ()->theta[3]);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 get_navigation_p ()->V[0],
-//			 get_navigation_p ()->V[1],
-//			 get_navigation_p ()->V[2],
-//			 get_navigation_p ()->V[3]);
+//	  print ("%d,%d,%d,%d\r\n",
+//			 motor4->ecd,
+//			 motor5->ecd,
+//			 motor6->ecd,
+//			 motor7->ecd);
+
+
 
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
 					   (int16_t) wheel1->output,
 					   (int16_t) wheel2->output,
-					   (int16_t) wheel3->output);
-//	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
-//					   (int16_t) 2000,
-//					   (int16_t) 2000,
-//					   (int16_t) 2000,
-//					   (int16_t) 2000);
-	  CAN_SendMessage (CAN_CHANNEL_2,
+					   0);
+//	  CAN_SendMessage (CAN_CHANNEL_2,
+//					   MOTOR_5678,
+//					   (int16_t) servo0_spd->output,
+//					   (int16_t) servo1_spd->output,
+//					   0,
+//					   0);
+	  CAN_SendMessage (CAN_CHANNEL_1,
 					   MOTOR_5678,
 					   (int16_t) servo0_spd->output,
-					   (int16_t) servo1_spd->output,
-					   (int16_t) servo2_spd->output,
-					   (int16_t) servo3_spd->output);
-
-//	  CAN_SendMessage (CAN_CHANNEL_1,
-//					   MOTOR_5678,
-//					   (int16_t) pid_servo0.spd.output,
-//					   (int16_t) pid_servo1.spd.output,
-//					   (int16_t) pid_servo2.spd.output,
-//					   (int16_t) pid_servo3.spd.output);
+					   -(int16_t) servo1_spd->output,
+					   0,
+					   0);
 
 	  vTaskDelayUntil (&xLastWakeUpTime, 1);
 	}
@@ -854,6 +820,7 @@ void StartSTEP_RESPONSETask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
+
 	  set_bsp_pid_step_response_target (100);
 	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
 	  set_bsp_pid_step_response_target (-100);
@@ -958,6 +925,28 @@ void StartMOTOR_TEMPTask (void *argument)
 	  osDelay (100);
 	}
   /* USER CODE END StartMOTOR_TEMPTask */
+}
+
+/* USER CODE BEGIN Header_StartTask12 */
+/**
+* @brief Function implementing the RunTimeStats thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask12 */
+void StartTask12 (void *argument)
+{
+  /* USER CODE BEGIN StartTask12 */
+  static char InfoBuffer[512] = {0};
+  /* Infinite loop */
+  for (;;)
+	{
+	  vTaskGetRunTimeStats ((char *) &InfoBuffer);
+//	  bsp_printf (BSP_UART1, "\r\n任务       运行计数         使用率\r\n");
+//	  bsp_printf (BSP_UART1, "\r\n%s\r\n", InfoBuffer);
+	  osDelay (1000);
+	}
+  /* USER CODE END StartTask12 */
 }
 
 /* Private application code --------------------------------------------------*/

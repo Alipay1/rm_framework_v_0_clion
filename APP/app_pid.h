@@ -17,6 +17,12 @@
 extern int GLOBAL_INIT;
 extern float g_pitch;
 
+typedef enum {
+  APP_PID_YAW = 0,
+  APP_PID_PIT = 1,
+  APP_PID_ROL = 2
+} SERVO_EULA_e;
+
 typedef struct pid_struct {
   int motor_number;
   bool active;
@@ -39,6 +45,9 @@ typedef struct pid_struct {
   float Limit_Out;
 
   float Kib;
+
+  bool if_angular_velocity_mode;
+  SERVO_EULA_e eula;
 
   uint8_t Error;
 } PID;
