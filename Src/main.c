@@ -71,7 +71,7 @@ void MX_FREERTOS_Init(void);
 /*configAPPLICATION_ALLOCATED_HEAP FreeRTOS heap defined in CCMRAM*/
 __attribute__ ((section(".ccmram"))) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
 
-__attribute__ ((section(".ccmram"))) uint32_t g_osRuntimeCounter = 0;
+uint32_t g_osRuntimeCounter = 0;
 
 /* USER CODE END 0 */
 
@@ -128,13 +128,16 @@ int main(void)
   CAN_FilterSetup ();
   remote_control_init ();
   bsp_led_init ();
-  bsp_buz_init ();
-  bsp_buz_apply_frequency (83);
-  HAL_TIM_Base_Start_IT (&htim7);
+
+//  bsp_buz_init ();
+//  bsp_buz_apply_frequency (83);
+
   while (BMI088_init (&hspi1, 1) != BMI088_NO_ERROR);
   DWT_Init (168);
   INS_Init ();
-  bsp_buz_mute ();
+
+//  bsp_buz_mute ();
+
   /* USER CODE END 2 */
 
   /* Init scheduler */

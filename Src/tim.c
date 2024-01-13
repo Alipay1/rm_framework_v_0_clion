@@ -849,11 +849,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
     /* TIM8 interrupt Deinit */
   /* USER CODE BEGIN TIM8:TIM8_TRG_COM_TIM14_IRQn disable */
-    /**
-    * Uncomment the line below to disable the "TIM8_TRG_COM_TIM14_IRQn" interrupt
-    * Be aware, disabling shared interrupt may affect other IPs
-    */
-    /* HAL_NVIC_DisableIRQ(TIM8_TRG_COM_TIM14_IRQn); */
+	  /**
+	  * Uncomment the line below to disable the "TIM8_TRG_COM_TIM14_IRQn" interrupt
+	  * Be aware, disabling shared interrupt may affect other IPs
+	  */
+	  /* HAL_NVIC_DisableIRQ(TIM8_TRG_COM_TIM14_IRQn); */
   /* USER CODE END TIM8:TIM8_TRG_COM_TIM14_IRQn disable */
 
   /* USER CODE BEGIN TIM8_MspDeInit 1 */
@@ -903,11 +903,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
     /* TIM14 interrupt Deinit */
   /* USER CODE BEGIN TIM14:TIM8_TRG_COM_TIM14_IRQn disable */
-    /**
-    * Uncomment the line below to disable the "TIM8_TRG_COM_TIM14_IRQn" interrupt
-    * Be aware, disabling shared interrupt may affect other IPs
-    */
-    /* HAL_NVIC_DisableIRQ(TIM8_TRG_COM_TIM14_IRQn); */
+	  /**
+	  * Uncomment the line below to disable the "TIM8_TRG_COM_TIM14_IRQn" interrupt
+	  * Be aware, disabling shared interrupt may affect other IPs
+	  */
+	  /* HAL_NVIC_DisableIRQ(TIM8_TRG_COM_TIM14_IRQn); */
   /* USER CODE END TIM14:TIM8_TRG_COM_TIM14_IRQn disable */
 
   /* USER CODE BEGIN TIM14_MspDeInit 1 */

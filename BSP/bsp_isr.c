@@ -60,6 +60,7 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
 	  extern osThreadId_t UART1RxTaskHandle;    // from freertos.c
 
 	  vTaskNotifyGiveFromISR (UART1RxTaskHandle, NULL);
+	  
 	  pid_sscanf (bsp_get_uart1_rx_buf ());
 	  bsp_led_toggle (LED_GREEN);
 
@@ -98,7 +99,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 		  case CAN_3508_M2_ID:
 		  case CAN_3508_M3_ID:
 		  case CAN_3508_M4_ID:
-//		  case CAN_TRIGGER_MOTOR_ID:
 			{
 			  int i = rx_header.StdId - CAN_3508_M1_ID;
 			  bsp_can_get_motor_measure (get_measure_pointer (i),

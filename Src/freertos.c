@@ -101,7 +101,7 @@ const osThreadAttr_t INSTask_attributes = {
 	.cb_size = sizeof (INSTaskControlBlock),
 	.stack_mem = &INSTaskBuffer[0],
 	.stack_size = sizeof (INSTaskBuffer),
-	.priority = (osPriority_t) osPriorityHigh,
+	.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LEDTask */
 osThreadId_t LEDTaskHandle;
@@ -137,7 +137,7 @@ const osThreadAttr_t CANTask_attributes = {
 	.cb_size = sizeof (CANTaskControlBlock),
 	.stack_mem = &CANTaskBuffer[0],
 	.stack_size = sizeof (CANTaskBuffer),
-	.priority = (osPriority_t) osPriorityNormal,
+	.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for UART1Task */
 osThreadId_t UART1TaskHandle;
@@ -213,6 +213,13 @@ const osThreadAttr_t MOTOR_TEMPTask_attributes = {
 	.stack_size = 256 * 4,
 	.priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for RunTimeStats */
+osThreadId_t RunTimeStatsHandle;
+const osThreadAttr_t RunTimeStats_attributes = {
+	.name = "RunTimeStats",
+	.stack_size = 512 * 4,
+	.priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for LED_q */
 osMessageQueueId_t LED_qHandle;
 const osMessageQueueAttr_t LED_q_attributes = {
@@ -282,6 +289,7 @@ void StartSTEP_RESPONSETask (void *argument);
 void StartUART6RxTask (void *argument);
 void StartUART1RxTask (void *argument);
 void StartMOTOR_TEMPTask (void *argument);
+void StartTask12 (void *argument);
 
 void MX_FREERTOS_Init (void); /* (MISRA C 2004 rule 8.1) */
 
@@ -293,7 +301,10 @@ unsigned long getRunTimeCounterValue (void);
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
 extern uint32_t g_osRuntimeCounter;/*defined in main.c(CCMRAM)*/
 __weak void configureTimerForRunTimeStats (void)
-{ g_osRuntimeCounter = 0; }
+{
+  HAL_TIM_Base_Start_IT (&htim7);
+  g_osRuntimeCounter = 0;
+}
 
 __weak unsigned long getRunTimeCounterValue (void)
 { return g_osRuntimeCounter; }
@@ -376,6 +387,9 @@ void MX_FREERTOS_Init (void)
   /* creation of MOTOR_TEMPTask */
   MOTOR_TEMPTaskHandle = osThreadNew (StartMOTOR_TEMPTask, NULL, &MOTOR_TEMPTask_attributes);
 
+  /* creation of RunTimeStats */
+  RunTimeStatsHandle = osThreadNew (StartTask12, NULL, &RunTimeStats_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -428,8 +442,10 @@ void StartLEDTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
+
+
 //	  bsp_led_blink (LED_RED);
-//	  bsp_led_blink (LED_GREEN);
+	  bsp_led_blink (LED_GREEN);
 //	  bsp_led_blink (LED_BLUE);
 //	  bsp_led_toggle (LED_GREEN);
 	  osDelay (pdMS_TO_TICKS(1000));
@@ -577,7 +593,7 @@ void StartCANTask (void *argument)
 //	  servo2_pos->ideal = 0 + nav->theta[2];
 //	  servo3_pos->ideal = 0 + nav->theta[3];
 
-	  extern int MS7010_FL_ANGLE;   //装上去的时候Y轴正向对应的编码值(偏置角度)
+	  extern int MS7010_FL_ANGLE;   //装上去的时�?�Y轴正向对应的编码�??(偏置角度)
 	  extern int MS7010_FR_ANGLE;
 	  extern int MS7010_BL_ANGLE;
 	  extern int MS7010_BR_ANGLE;
@@ -673,11 +689,11 @@ void StartCANTask (void *argument)
 //				  motor1->ecd,
 //				  motor2->ecd,
 //				  motor3->ecd);
-	  print ("%d,%d,%d,%d\r\n",
-			 motor4->ecd,
-			 motor5->ecd,
-			 motor6->ecd,
-			 motor7->ecd);
+//	  print ("%d,%d,%d,%d\r\n",
+//			 motor4->ecd,
+//			 motor5->ecd,
+//			 motor6->ecd,
+//			 motor7->ecd);
 //	  print ("%f,%f\r\n",
 //			 get_navigation_p ()->V[0],
 //			 get_navigation_p ()->theta[0]);
@@ -692,29 +708,19 @@ void StartCANTask (void *argument)
 //			 get_navigation_p ()->V[2],
 //			 get_navigation_p ()->V[3]);
 
+
+
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
 					   (int16_t) wheel1->output,
 					   (int16_t) wheel2->output,
 					   (int16_t) wheel3->output);
-//	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
-//					   (int16_t) 2000,
-//					   (int16_t) 2000,
-//					   (int16_t) 2000,
-//					   (int16_t) 2000);
 	  CAN_SendMessage (CAN_CHANNEL_2,
 					   MOTOR_5678,
 					   (int16_t) servo0_spd->output,
 					   (int16_t) servo1_spd->output,
 					   (int16_t) servo2_spd->output,
 					   (int16_t) servo3_spd->output);
-
-//	  CAN_SendMessage (CAN_CHANNEL_1,
-//					   MOTOR_5678,
-//					   (int16_t) pid_servo0.spd.output,
-//					   (int16_t) pid_servo1.spd.output,
-//					   (int16_t) pid_servo2.spd.output,
-//					   (int16_t) pid_servo3.spd.output);
 
 	  vTaskDelayUntil (&xLastWakeUpTime, 1);
 	}
@@ -854,6 +860,7 @@ void StartSTEP_RESPONSETask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
+
 	  set_bsp_pid_step_response_target (100);
 	  vTaskDelayUntil (&xLastWakeUpTime, 1000);
 	  set_bsp_pid_step_response_target (-100);
@@ -958,6 +965,28 @@ void StartMOTOR_TEMPTask (void *argument)
 	  osDelay (100);
 	}
   /* USER CODE END StartMOTOR_TEMPTask */
+}
+
+/* USER CODE BEGIN Header_StartTask12 */
+/**
+* @brief Function implementing the RunTimeStats thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask12 */
+void StartTask12 (void *argument)
+{
+  /* USER CODE BEGIN StartTask12 */
+  static char InfoBuffer[512] = {0};
+  /* Infinite loop */
+  for (;;)
+	{
+	  vTaskGetRunTimeStats ((char *) &InfoBuffer);
+	  bsp_printf (BSP_UART1, "\r\n任务       运行计数         使用率\r\n");
+	  bsp_printf (BSP_UART1, "\r\n%s\r\n", InfoBuffer);
+	  osDelay (1000);
+	}
+  /* USER CODE END StartTask12 */
 }
 
 /* Private application code --------------------------------------------------*/
