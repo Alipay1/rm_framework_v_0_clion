@@ -618,13 +618,20 @@ void StartCANTask (void *argument)
 //				  servo0_pos->ideal,
 //				  servo1_pos->actual,
 //				  servo1_pos->ideal);
+//	  print ("%f,%f,%f,%f,%f,%f\r\n",
+//			 servo1_spd->actual,
+//			 servo1_spd->ideal,
+//			 servo1_spd->output,
+//			 servo1_pos->actual,
+//			 servo1_pos->ideal,
+//			 servo1_pos->output);
 	  print ("%f,%f,%f,%f,%f,%f\r\n",
-			 servo1_spd->actual,
-			 servo1_spd->ideal,
-			 servo1_spd->output,
-			 servo1_pos->actual,
-			 servo1_pos->ideal,
-			 servo1_pos->output);
+			 servo0_spd->actual,
+			 servo0_spd->ideal,
+			 servo0_spd->output,
+			 servo0_pos->actual,
+			 servo0_pos->ideal,
+			 servo0_pos->output);
 //	  bsp_printf (BSP_UART6, "%d,%d\r\n",
 //				  rc_ctrl.rc.ch[0],
 //				  rc_ctrl.rc.ch[1]);
@@ -677,8 +684,8 @@ void StartCANTask (void *argument)
 //					   0);
 	  CAN_SendMessage (CAN_CHANNEL_1,
 					   MOTOR_5678,
+					   (int16_t) servo1_spd->output,
 					   (int16_t) servo0_spd->output,
-					   -(int16_t) servo1_spd->output,
 					   0,
 					   0);
 
