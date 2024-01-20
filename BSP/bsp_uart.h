@@ -15,8 +15,9 @@
 extern MessageBufferHandle_t UART1_MB_HANDLE;
 extern MessageBufferHandle_t UART6_MB_HANDLE;
 typedef enum {
-  BSP_UART1 = 1, // option success
-  BSP_UART6 = 6,   // option fail
+  BSP_CDC = 0,
+  BSP_UART1 = 1,
+  BSP_UART6 = 6,
 } BSP_UART_e;
 typedef enum {
   BSP_UART_OPT_SUCCESS = 0, // option success

@@ -30,6 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usb_device.h"
 
 #include "bsp.h"
 #include "app_rc.h"
@@ -124,10 +125,16 @@ int main(void)
   MX_TIM14_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
+  MX_USB_DEVICE_Init ();
+
+  bsp_led_init ();
+  bsp_led_write (LED_BLUE, 255);//end in MX_FREERTOS_Init
+
   bsp_uart_init ();
   CAN_FilterSetup ();
   remote_control_init ();
-  bsp_led_init ();
+
+
 
 //  bsp_buz_init ();
 //  bsp_buz_apply_frequency (83);

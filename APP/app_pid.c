@@ -49,7 +49,7 @@ int PID_Setup (void)
   i++;
   (pid_speed_struct + i)->motor_number = 2;
   (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = -4000;
+  (pid_speed_struct + i)->ideal = -2500;
   (pid_speed_struct + i)->Kp = 6.5f; /*3*/
   (pid_speed_struct + i)->Ki = 0.5f;
   (pid_speed_struct + i)->Kd = 0.0f;
@@ -73,8 +73,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->Kp = 6000.0F; /*5*/
   (pid_speed_struct + i)->Ki = 115.0F;
   (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 10000;
-  (pid_speed_struct + i)->Limit_Out = 10000;
+  (pid_speed_struct + i)->Limit_Iout = 30000;
+  (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   (pid_speed_struct + i)->if_angular_velocity_mode = true;
   (pid_speed_struct + i)->eula = APP_PID_YAW;
@@ -82,11 +82,11 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 5;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 1200.0f; /*6*/
-  (pid_speed_struct + i)->Ki = 100.0f;
+  (pid_speed_struct + i)->Kp = 5500.0f; /*6*/
+  (pid_speed_struct + i)->Ki = 140.0f;
   (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 5000;
-  (pid_speed_struct + i)->Limit_Out = 5000;
+  (pid_speed_struct + i)->Limit_Iout = 30000;
+  (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   (pid_speed_struct + i)->if_angular_velocity_mode = true;
   (pid_speed_struct + i)->eula = APP_PID_PIT;
@@ -126,8 +126,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 9;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.1F; /*10 PITCH*/
-  (pid_speed_struct + i)->Ki = 0.0000F;
+  (pid_speed_struct + i)->Kp = 0.12F; /*10 PITCH*/
+  (pid_speed_struct + i)->Ki = 0.000001F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 10;
   (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
@@ -193,7 +193,7 @@ int PID_Calculate_seper (PID *input_spd, PID *input_pos)
 	  float temp = 0;
 	  switch (input_pos->eula)
 		{
-		  case APP_PID_YAW: temp = INS.Yaw;
+		  case APP_PID_YAW: temp = INS.YawTotalAngle;
 		  break;
 		  case APP_PID_PIT: temp = INS.Pitch;
 		  break;
