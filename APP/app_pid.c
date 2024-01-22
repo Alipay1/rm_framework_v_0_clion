@@ -117,7 +117,7 @@ int PID_Setup (void)
   (pid_speed_struct + i)->Kp = 0.1F; /*9 motor5 6020 no.1 position YAW*/
   (pid_speed_struct + i)->Ki = 0.0000F;
   (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 10;
+  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Error = 0;
   (pid_speed_struct + i)->if_angular_velocity_mode = true;
@@ -129,7 +129,7 @@ int PID_Setup (void)
   (pid_speed_struct + i)->Kp = 0.12F; /*10 PITCH*/
   (pid_speed_struct + i)->Ki = 0.000001F;
   (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 10;
+  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Error = 0;
   (pid_speed_struct + i)->if_angular_velocity_mode = true;
