@@ -18,8 +18,9 @@ typedef enum {
   LED_RED = TIM_CHANNEL_3
 } LED_COLOR_e;
 
-void bsp_led_init(void);
-void bsp_led_blink(LED_COLOR_e color);
-void bsp_led_toggle(LED_COLOR_e color);
+void bsp_led_init (void);
+void bsp_led_blink_os (LED_COLOR_e color);
+void bsp_led_write (LED_COLOR_e color, uint8_t brightness);
+void bsp_led_toggle (LED_COLOR_e color);
 
 #endif // C_BOARD_STANDARD_ROBOT_BSP_LED_H

@@ -73,6 +73,7 @@ int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...)
   switch (UARTx)
 	{
 	  default:
+	  case BSP_CDC://todo end this
 
 	  case BSP_UART1: private_message_buf_handle = &UART1_MB_HANDLE;
 	  huart = huart1;
@@ -89,9 +90,7 @@ int bsp_printf (BSP_UART_e UARTx, const char *fmt, ...)
 
   if (written > 0)
 	{
-	  // 如果有数据被写入到buffer中
 	  while (xMessageBufferSend(*private_message_buf_handle, buffer, written, 0) != written);
-	  // 也许你还需要处理FIFO已满或者其他错误的情况
 
 //	  HAL_UART_Transmit (&huart, buffer, written, 0xFFFF);
 	}
@@ -112,16 +111,16 @@ void usart1_tx_dma_init (void)
 
   // enable the DMA transfer for the receiver and tramsmit request
   // 使能DMA串口接收和发送
-  SET_BIT(huart1.Instance->CR3, USART_CR3_DMAR);
-  SET_BIT(huart1.Instance->CR3, USART_CR3_DMAT);
+  SET_BIT (huart1.Instance->CR3, USART_CR3_DMAR);
+  SET_BIT (huart1.Instance->CR3, USART_CR3_DMAT);
 
   // disable DMA
   // 失效DMA
-  __HAL_DMA_DISABLE(&hdma_usart1_tx);
+  __HAL_DMA_DISABLE (&hdma_usart1_tx);
 
   while (hdma_usart1_tx.Instance->CR & DMA_SxCR_EN)
 	{
-	  __HAL_DMA_DISABLE(&hdma_usart1_tx);
+	  __HAL_DMA_DISABLE (&hdma_usart1_tx);
 	}
 
   hdma_usart1_tx.Instance->PAR = (uint32_t) &(USART1->DR);
@@ -132,17 +131,17 @@ void usart1_tx_dma_enable (uint8_t *data, uint16_t len)
 {
   // disable DMA
   // 失效DMA
-  __HAL_DMA_DISABLE(&hdma_usart1_tx);
+  __HAL_DMA_DISABLE (&hdma_usart1_tx);
 
   while (hdma_usart1_tx.Instance->CR & DMA_SxCR_EN)
 	{
-	  __HAL_DMA_DISABLE(&hdma_usart1_tx);
+	  __HAL_DMA_DISABLE (&hdma_usart1_tx);
 	}
 
-  __HAL_DMA_CLEAR_FLAG(&hdma_usart1_tx, DMA_HISR_TCIF7);
+  __HAL_DMA_CLEAR_FLAG (&hdma_usart1_tx, DMA_HISR_TCIF7);
 
   hdma_usart1_tx.Instance->M0AR = (uint32_t) (data);
-  __HAL_DMA_SET_COUNTER(&hdma_usart1_tx, len);
+  __HAL_DMA_SET_COUNTER (&hdma_usart1_tx, len);
 
-  __HAL_DMA_ENABLE(&hdma_usart1_tx);
+  __HAL_DMA_ENABLE (&hdma_usart1_tx);
 }
