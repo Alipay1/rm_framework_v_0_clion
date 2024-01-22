@@ -2,6 +2,8 @@
 // Created by zhpwa on 2024/1/10.
 //
 
+//!! this is for chassis ONLY !!
+
 #include "app_pid.h"
 
 #include "stdio.h"
@@ -29,40 +31,40 @@ int PID_Setup (void)
   uint8_t i = 0;
   (pid_speed_struct + i)->motor_number = 0;
   (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = -6000;
-  (pid_speed_struct + i)->Kp = 5.0f; /*1*/
-  (pid_speed_struct + i)->Ki = 0.02f;
-  (pid_speed_struct + i)->Kd = 0.1f;
+  (pid_speed_struct + i)->ideal = 0.0F;
+  (pid_speed_struct + i)->Kp = 6.5f; /*1*/
+  (pid_speed_struct + i)->Ki = 0.05f;
+  (pid_speed_struct + i)->Kd = 0.001f;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 1;
   (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = 6000;
-  (pid_speed_struct + i)->Kp = 5.0f; /*2*/
-  (pid_speed_struct + i)->Ki = 0.02f;
-  (pid_speed_struct + i)->Kd = 0.1f;
+  (pid_speed_struct + i)->ideal = 0.0F;
+  (pid_speed_struct + i)->Kp = 6.5f; /*2*/
+  (pid_speed_struct + i)->Ki = 0.05f;
+  (pid_speed_struct + i)->Kd = 0.001f;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 2;
   (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = -2500;
+  (pid_speed_struct + i)->ideal = 0.0F;
   (pid_speed_struct + i)->Kp = 6.5f; /*3*/
-  (pid_speed_struct + i)->Ki = 0.5f;
-  (pid_speed_struct + i)->Kd = 0.0f;
+  (pid_speed_struct + i)->Ki = 0.05f;
+  (pid_speed_struct + i)->Kd = 0.001f;
   (pid_speed_struct + i)->Limit_Iout = 16384;
   (pid_speed_struct + i)->Limit_Out = 16384;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 3;
-  (pid_speed_struct + i)->active = false;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*4*/
-  (pid_speed_struct + i)->Ki = 0;
-  (pid_speed_struct + i)->Kd = 0;
+  (pid_speed_struct + i)->active = true;
+  (pid_speed_struct + i)->ideal = 0.0F;
+  (pid_speed_struct + i)->Kp = 6.5f; /*4*/
+  (pid_speed_struct + i)->Ki = 0.05f;
+  (pid_speed_struct + i)->Kd = 0.001f;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
@@ -70,8 +72,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 4;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 6000.0F; /*5*/
-  (pid_speed_struct + i)->Ki = 115.0F;
+  (pid_speed_struct + i)->Kp = 165.0F; /*5*/
+  (pid_speed_struct + i)->Ki = 7.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
@@ -82,8 +84,8 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 5;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 5500.0f; /*6*/
-  (pid_speed_struct + i)->Ki = 140.0f;
+  (pid_speed_struct + i)->Kp = 165.0F; /*6*/
+  (pid_speed_struct + i)->Ki = 7.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
@@ -92,20 +94,20 @@ int PID_Setup (void)
   (pid_speed_struct + i)->eula = APP_PID_PIT;
   i++;
   (pid_speed_struct + i)->motor_number = 6;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*7*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 165.0F; /*7*/
+  (pid_speed_struct + i)->Ki = 7.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 7;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*8*/
-  (pid_speed_struct + i)->Ki = 0;
+  (pid_speed_struct + i)->Kp = 165.0F; /*8*/
+  (pid_speed_struct + i)->Ki = 7.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = 30000;
   (pid_speed_struct + i)->Limit_Out = 30000;
@@ -114,42 +116,42 @@ int PID_Setup (void)
   (pid_speed_struct + i)->motor_number = 8;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.1F; /*9 motor5 6020 no.1 position YAW*/
-  (pid_speed_struct + i)->Ki = 0.0000F;
+  (pid_speed_struct + i)->Kp = 0.15F; /*9 motor5 6020 no.1 position YAW*/
+  (pid_speed_struct + i)->Ki = 0.0F;
   (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 10;
+  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Error = 0;
   (pid_speed_struct + i)->if_angular_velocity_mode = true;
-  (pid_speed_struct + i)->eula = APP_PID_YAW;
+//  (pid_speed_struct + i)->eula = APP_PID_YAW;
   i++;
   (pid_speed_struct + i)->motor_number = 9;
   (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.12F; /*10 PITCH*/
-  (pid_speed_struct + i)->Ki = 0.000001F;
+  (pid_speed_struct + i)->Kp = 0.15F; /*10 PITCH*/
+  (pid_speed_struct + i)->Ki = 0.0F;
   (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 10;
+  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Error = 0;
   (pid_speed_struct + i)->if_angular_velocity_mode = true;
-  (pid_speed_struct + i)->eula = APP_PID_PIT;
+//  (pid_speed_struct + i)->eula = APP_PID_PIT;
   i++;
   (pid_speed_struct + i)->motor_number = 10;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
   (pid_speed_struct + i)->Kp = 0.15F; /*11*/
-  (pid_speed_struct + i)->Ki = 0.001F;
+  (pid_speed_struct + i)->Ki = 0.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Error = 0;
   i++;
   (pid_speed_struct + i)->motor_number = 11;
-  (pid_speed_struct + i)->active = false;
+  (pid_speed_struct + i)->active = true;
   (pid_speed_struct + i)->ideal = 0;
   (pid_speed_struct + i)->Kp = 0.15F; /*12*/
-  (pid_speed_struct + i)->Ki = 0.001F;
+  (pid_speed_struct + i)->Ki = 0.0F;
   (pid_speed_struct + i)->Kd = 0;
   (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
   (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
