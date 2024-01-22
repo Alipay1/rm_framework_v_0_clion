@@ -59,7 +59,7 @@ typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticSemaphore_t osStaticMutexDef_t;
 typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN PTD */
-
+//delete 123456
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/

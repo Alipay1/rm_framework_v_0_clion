@@ -2,6 +2,8 @@
 // Created by zhpwa on 2024/1/10.
 //
 
+//!!this is for gimbal!!
+
 #include "app_pid.h"
 
 #include "stdio.h"

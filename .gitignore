@@ -1,7 +1,7 @@
 *.*
 Makefile*
 
-/cmake-build*
+/cmake-build-debug
 
 /CMSIS-DSP
 
