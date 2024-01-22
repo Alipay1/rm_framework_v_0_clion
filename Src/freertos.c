@@ -445,7 +445,7 @@ void StartLEDTask (void *argument)
 
 
 //	  bsp_led_blink (LED_RED);
-	  bsp_led_blink (LED_GREEN);
+	  bsp_led_blink_os (LED_GREEN);
 //	  bsp_led_blink (LED_BLUE);
 //	  bsp_led_toggle (LED_GREEN);
 	  osDelay (pdMS_TO_TICKS(1000));
