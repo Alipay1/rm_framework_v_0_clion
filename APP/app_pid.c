@@ -2,7 +2,7 @@
 // Created by zhpwa on 2024/1/10.
 //
 
-//!! this is for chassis ONLY !!!
+//!! this is for framework development ONLY !!!
 
 #include "app_pid.h"
 
