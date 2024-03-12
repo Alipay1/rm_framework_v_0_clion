@@ -6,6 +6,7 @@
 #define _BSP_CAN_H_
 
 #include "main.h"
+
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 
@@ -20,7 +21,7 @@ extern CAN_HandleTypeDef hcan2;
 #define ENCODER_MAX_VALUE 8191
 #define ENCODER_THRESHOLD (ENCODER_MAX_VALUE / 2)
 
-#define bsp_can_get_motor_measure(ptr, data)                                   \
+#define bsp_can_get_motor_measure(ptr, data)                           \
     {                                                                  \
         (ptr)->last_last_ecd = (ptr)->last_ecd;                        \
         (ptr)->last_ecd = (ptr)->ecd;                                  \
@@ -30,7 +31,7 @@ extern CAN_HandleTypeDef hcan2;
         (ptr)->temperate = (data)[6];                                  \
     }
 
-#define bsp_can_get_rc_from_chassis(ptr, data)                          \
+#define bsp_can_get_rc_from_chassis(ptr, data)                  \
     {                                                           \
         (ptr)->mouse.x = (int16_t)((data)[1] << 8 | (data)[0]); \
         (ptr)->mouse.y = (int16_t)((data)[3] << 8 | (data)[2]); \
@@ -38,15 +39,21 @@ extern CAN_HandleTypeDef hcan2;
         (ptr)->mouse.press_r = (data)[5];                       \
         (ptr)->key.v = (uint16_t)((data)[7] << 8 | (data)[6]);  \
                                                                 \
-        (ptr)->mouse_integeral.x += (float)(ptr)->mouse.x;      \
-        (ptr)->mouse_integeral.y += (float)(ptr)->mouse.y;      \
-        (ptr)->mouse_integeral.z += (float)(ptr)->mouse.z;      \
+        (ptr)->mouse.ix += (float)(ptr)->mouse.x;               \
+        (ptr)->mouse.iy += (float)(ptr)->mouse.y;               \
+        (ptr)->mouse.iz += (float)(ptr)->mouse.z;               \
     }
 
-typedef enum {
-  USING_CAN1 = 1,
-  USING_CAN2 = 2
-} can_select;
+#define get_ammo_booster_info (ptr, data)                \
+    {                                                    \
+      (ptr)->ID = data[0];                               \
+      (ptr)->shooting_rate = data[1];                    \
+      (ptr)->bullet_speed = (data[3] << 8) | data[2];    \
+      (ptr)->muzzle_heat = data[4];                      \
+      (ptr)->muzzle_heat_lim = data[5];                  \
+      (ptr)->muzzle_cooling_rate = data[6];              \
+      (ptr)->muzzle_speed_lim = data[7];                 \
+    }
 
 typedef enum {
   CAN_CHASSIS_ALL_ID = 0x200,
@@ -62,9 +69,11 @@ typedef enum {
 
   CAN_GIMBAL_ALL_ID = 0x1FF,
 
-  CHASSIS_CONTROLLER = 0x519,
+  CHASSIS_CONTROLLER = 0x519,//底盘发来的遥控器信息
 
-  ECD_REPORT_ID = 0x520,
+  ECD_REPORT_ID = 0x520,//向底盘发送YAW角度
+
+  ECD_SET_ID = 0x119,//设置底盘正方向（猜测）
 
   AMMO_BOOSTER = 0x521,
 
@@ -94,26 +103,6 @@ typedef struct {
 } motor_measure_t;
 
 typedef struct {
-  struct {
-	int16_t x;
-	int16_t y;
-	int16_t z;
-	uint8_t press_l;
-	uint8_t press_r;
-  } mouse;
-
-  struct {
-	float x;
-	float y;
-	float z;
-  } mouse_integral;
-
-  struct {
-	uint16_t v;
-  } key;
-} chassis_transported_controller_data;
-
-typedef struct {
   uint8_t ID;
   uint8_t shooting_rate;
   uint16_t bullet_speed;
@@ -130,10 +119,12 @@ motor data,  0:chassis motor1 3508;1:chassis motor3 3508;2:chassis motor3 3508;3
 4:yaw云台电机 6020电机; 5:pitch云台电机 6020电机; 6:拨弹电机 2006电机*/
 
 void CAN_FilterSetup (void);
+
 motor_measure_t *get_measure_pointer (uint32_t i);
-chassis_transported_controller_data *get_rc_data_from_chassis_pointer (void);
+
 uint32_t
-CAN_SendMessage (can_channel_id CAN_Channel, motor_id_range MOTOR_ID_RANGE, int16_t Motor1, int16_t Motor2, int16_t Motor3, int16_t Motor4);
+CAN_SendMessage (can_channel_id CAN_Channel, motor_id_range MOTOR_ID_RANGE, int16_t Motor1, int16_t Motor2,
+				 int16_t Motor3, int16_t Motor4);
 
 ammo_booster_data *get_ammo_booster_info_ptr (void);
 

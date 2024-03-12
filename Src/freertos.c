@@ -48,6 +48,7 @@
 #include "app_nav.h"
 
 #include "usbd_cdc_if.h"
+#include "bsp_isr.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedValue"
@@ -281,22 +282,34 @@ const osEventFlagsAttr_t Key_e_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartINSTask (void *argument);
+
 void StartLEDTask (void *argument);
+
 void StartBUZTask (void *argument);
+
 void StartCANTask (void *argument);
+
 void StartUART1Task (void *argument);
+
 void StartUART6Task (void *argument);
+
 void StartSERVOTask (void *argument);
+
 void StartSTEP_RESPONSETask (void *argument);
+
 void StartUART6RxTask (void *argument);
+
 void StartUART1RxTask (void *argument);
+
 void StartMOTOR_TEMPTask (void *argument);
+
 void StartTask12 (void *argument);
 
 void MX_FREERTOS_Init (void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
 void configureTimerForRunTimeStats (void);
+
 unsigned long getRunTimeCounterValue (void);
 
 /* USER CODE BEGIN 1 */
@@ -530,8 +543,6 @@ void StartCANTask (void *argument)
   motor_measure_t *motor2 = get_measure_pointer (2);
   motor_measure_t *motor3 = get_measure_pointer (3);
 
-  extern RC_ctrl_t rc_ctrl;
-
   const RC_ctrl_t *rc = get_remote_control_point ();
 
   PID *servo0_pos = pid_get_struct_pointer (4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
@@ -552,54 +563,31 @@ void StartCANTask (void *argument)
 
   app_nav_t *nav = get_navigation_p ();
 
-  float pit, ya;
-
   /* Infinite loop */
   for (;;)
 	{
+	  servo0_pos->ideal = 0.01F * (float) rc->mouse.iy;
+	  servo1_pos->ideal = 0.01F * (float) rc->mouse.ix;
 
-	  servo0_pos->ideal = rc_ctrl.rc.ch[0] * 0.1F;
-	  servo1_pos->ideal = rc_ctrl.rc.ch[1] * 0.05F;
-//	  servo2_pos->ideal = get_bsp_pid_step_response_target ();
-//	  servo3_pos->ideal = get_bsp_pid_step_response_target ();
-
-
-	  if (rc_ctrl.rc.s[0] == 3)
+	  if (rc->mouse.press_l == true)
 		{
 		  wheel0->ideal = -6000;
 		  wheel1->ideal = 6000;
 		}
-	  else
+	  else if (rc->mouse.press_l == false)
 		{
 		  wheel0->ideal = 0;
 		  wheel1->ideal = 0;
 		}
 
-	  if (rc_ctrl.rc.s[1] == 1)
+	  if (rc->mouse.press_r == 1)
 		{
 		  wheel2->ideal = -2500;
-		  servo0_pos->ideal = rc_ctrl.rc.ch[0] * 0.1F;
-		  servo1_pos->ideal = rc_ctrl.rc.ch[1] * 0.05F;
-		  pit = rc_ctrl.rc.ch[0] * 0.1F;
-		  ya = rc_ctrl.rc.ch[1] * 0.05F;
 		}
-	  else if (rc_ctrl.rc.s[1] == 2)
+	  else if (rc->mouse.press_r == 0)
 		{
 		  wheel2->ideal = 0;
-		  servo0_pos->ideal = rc_ctrl.rc.ch[0] * 0.1F;
-		  servo1_pos->ideal = rc_ctrl.rc.ch[1] * 0.05F;
-
 		}
-	  else if (rc_ctrl.rc.s[1] == 3)
-		{
-
-		  wheel2->ideal = 0;
-		  servo0_pos->ideal = pit;
-		  servo1_pos->ideal = ya;
-		}
-//	  wheel2->ideal = get_navi_struct_p ()->vector.velocity;
-//	  wheel3->ideal = get_navi_struct_p ()->vector.velocity;
-
 
 	  PID_Calculate_seper (servo0_spd, servo0_pos);
 	  PID_Calculate_seper (servo1_spd, servo1_pos);
@@ -609,121 +597,17 @@ void StartCANTask (void *argument)
 	  PID_Calculate_single (wheel2);
 	  PID_Calculate_single (wheel3);
 
-	  if (INS.Pitch > 35.0F || INS.Pitch < -35.0F)
-		{
-		  servo0_pos->active = false;
-		  servo0_spd->active = false;
-		}
-	  else
-		{
-		  servo0_pos->integral = 0;
-		  servo0_spd->integral = 0;
-		  servo0_pos->active = true;
-		  servo0_spd->active = true;
-		}
+	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
 
-//	  PID_Calculate_seper (&pid_servo0.spd, &pid_servo0.pos);
-//	  PID_Calculate_seper (&pid_servo1.spd, &pid_servo1.pos);
-//	  PID_Calculate_seper (&pid_servo2.spd, &pid_servo2.pos);
-//	  PID_Calculate_seper (&pid_servo3.spd, &pid_servo3.pos);
+	  CAN_SendMessage (CAN_CHANNEL_2, ECD_REPORT,
+					   motor5->ecd, 0, 0, 0);
 
-//	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
-//	  bsp_printf (BSP_UART6, "psc:%d\r\narr:%d\r\n", htim4.Instance->PSC, htim4.Instance->ARR);
-//	  bsp_printf (BSP_UART6, "tone:%d\r\n", bsp_buz_set_pitch (BSP_BUZ_TONE_DO));
-//	  bsp_printf (BSP_UART6, "addr:%p\r\n", wheel0);
-//	  bsp_printf (BSP_UART6, "total_ecd:%d\r\n", motor0_pos->total_ecd);
-//	  bsp_printf (BSP_UART6, "run:%d\r\nkp:%f\r\nki:%f\r\nkd:%f\r\n", wheel0->active ? 1 : 0,
-//				  wheel0->Kp, wheel0->Ki, wheel0->Kd);
-//	  bsp_printf (BSP_UART6, "%f,%f,%f,%f,%f,%f,%d\r\n",
-//				  servo0_pos->ideal,
-//				  servo0_pos->actual,
-//				  servo0_pos->output,
-//				  servo0_spd->ideal,
-//				  servo0_spd->actual,
-//				  servo0_spd->output,
-//				  motor0->total_ecd);
-//	  print ("%f,%f,%f,%f,%f,%f,%d\r\n",
-//			 servo2_pos->ideal,
-//			 servo2_pos->actual,
-//			 servo2_pos->output,
-//			 servo2_spd->ideal,
-//			 servo2_spd->actual,
-//			 servo2_spd->output,
-//			 motor2->total_ecd);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 servo0_spd->output,
-//			 servo1_spd->output,
-//			 servo2_spd->output,
-//			 servo3_spd->output);
-//	  bsp_printf (BSP_UART1, "%f,%f,%f,%f\r\n",
-//				  servo0_pos->actual,
-//				  servo0_pos->ideal,
-//				  servo1_pos->actual,
-//				  servo1_pos->ideal);
-//	  print ("%f,%f,%f,%f,%f,%f\r\n",
-//			 servo1_spd->actual,
-//			 servo1_spd->ideal,
-//			 servo1_spd->output,
-//			 servo1_pos->actual,
-//			 servo1_pos->ideal,
-//			 servo1_pos->output);
-	  print ("%f,%f,%f,%f,%f,%f\r\n",
-			 servo0_spd->actual,
-			 servo0_spd->ideal,
-			 servo0_spd->output,
-			 servo0_pos->actual,
-			 servo0_pos->ideal,
-			 servo0_pos->output);
-//	  bsp_printf (BSP_UART6, "%d,%d\r\n",
-//				  rc_ctrl.rc.ch[0],
-//				  rc_ctrl.rc.ch[1]);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 pid_servo0.pos.actual,
-//			 pid_servo0.pos.actual,
-//			 pid_servo0.pos.actual,
-//			 pid_servo0.pos.actual);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 pid_servo0.spd.output,
-//			 pid_servo1.spd.output,
-//			 pid_servo2.spd.output,
-//			 pid_servo3.spd.output);
-//	  print ("%f,%f\r\n",
-//			 wheel2->ideal,
-//			 wheel2->actual);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 wheel0->actual,
-//			 wheel1->actual,
-//			 wheel2->actual,
-//			 wheel3->actual);
-//	  print ("%f,%f,%f,%f\r\n",
-//			 wheel0->output,
-//			 wheel1->output,
-//			 wheel2->output,
-//			 wheel3->output);
-//	  bsp_printf (BSP_UART1, "%f,%f,%f,%f\r\n",
-//				  motor0->ecd,
-//				  motor1->ecd,
-//				  motor2->ecd,
-//				  motor3->ecd);
-//	  print ("%d,%d,%d,%d\r\n",
-//			 motor4->ecd,
-//			 motor5->ecd,
-//			 motor6->ecd,
-//			 motor7->ecd);
-
-
-	  CDC_Transmit_FS ((uint8_t *) "HELLO_WORLD!!!!!\r\n", sizeof ("HELLO_WORLD!!!!!\r\n"));
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
 					   (int16_t) wheel1->output,
 					   (int16_t) wheel2->output,
 					   0);
-//	  CAN_SendMessage (CAN_CHANNEL_2,
-//					   MOTOR_5678,
-//					   (int16_t) servo0_spd->output,
-//					   (int16_t) servo1_spd->output,
-//					   0,
-//					   0);
+
 	  CAN_SendMessage (CAN_CHANNEL_1,
 					   MOTOR_5678,
 					   (int16_t) servo1_spd->output,

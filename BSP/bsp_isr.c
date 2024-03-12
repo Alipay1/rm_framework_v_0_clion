@@ -20,6 +20,7 @@
 #include "usart.h"
 
 #include "app_pid.h"
+#include "app_rc.h"
 
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
@@ -60,7 +61,7 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
 	  extern osThreadId_t UART1RxTaskHandle;    // from freertos.c
 
 	  vTaskNotifyGiveFromISR (UART1RxTaskHandle, NULL);
-	  
+
 	  pid_sscanf (bsp_get_uart1_rx_buf ());
 	  bsp_led_toggle (LED_GREEN);
 
@@ -95,17 +96,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 	  switch (rx_header.StdId)
 		{
 
+		  case CAN_YAW_MOTOR_ID:
+		  case CAN_PIT_MOTOR_ID:
 		  case CAN_3508_M1_ID:
 		  case CAN_3508_M2_ID:
 		  case CAN_3508_M3_ID:
 		  case CAN_3508_M4_ID:
 			{
 			  int i = rx_header.StdId - CAN_3508_M1_ID;
-			  bsp_can_get_motor_measure (get_measure_pointer (i),
-										 rx_data);
+			  bsp_can_get_motor_measure (get_measure_pointer (i), rx_data);
 			  bsp_can_updateTotalAngle (i);
 
-//			  bsp_led_toggle (LED_BLUE);
 			  break;
 			}
 
@@ -118,15 +119,15 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 
   if (hcan->Instance == CAN2)
 	{
+
 	  switch (rx_header.StdId)
 		{
 		  case CAN_YAW_MOTOR_ID:
 		  case CAN_PIT_MOTOR_ID:
 		  case 0x207:
 		  case 0x208:
-//		  case CAN_TRIGGER_MOTOR_ID:
 			{
-			  int i = rx_header.StdId - CAN_3508_M1_ID;
+			  uint32_t i = rx_header.StdId - CAN_3508_M1_ID;
 			  bsp_can_get_motor_measure (get_measure_pointer (i),
 										 rx_data);
 			  bsp_can_updateTotalAngle (i);
@@ -134,6 +135,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 //			  bsp_led_toggle (LED_BLUE);
 			  break;
 			}
+
+		  case CHASSIS_CONTROLLER:
+		  bsp_can_get_rc_from_chassis(get_remote_control_point (), rx_data);
 
 		  default:
 			{

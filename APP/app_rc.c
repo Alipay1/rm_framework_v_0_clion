@@ -83,7 +83,7 @@ void remote_control_init (void)
   * @param[in]      none
   * @retval         遥控器数据指针
   */
-const RC_ctrl_t *get_remote_control_point (void)
+RC_ctrl_t *get_remote_control_point (void)
 {
   return &rc_ctrl;
 }
@@ -274,6 +274,10 @@ static void sbus_to_rc (volatile const uint8_t *sbus_buf, RC_ctrl_t *rc_ctrl)
   rc_ctrl->rc.ch[2] -= RC_CH_VALUE_OFFSET;
   rc_ctrl->rc.ch[3] -= RC_CH_VALUE_OFFSET;
   rc_ctrl->rc.ch[4] -= RC_CH_VALUE_OFFSET;
+
+  rc_ctrl->mouse.ix += rc_ctrl->mouse.x;
+  rc_ctrl->mouse.iy += rc_ctrl->mouse.y;
+  rc_ctrl->mouse.iz += rc_ctrl->mouse.z;
 }
 
 /**

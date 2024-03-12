@@ -66,12 +66,18 @@ typedef struct {
 	int16_t ch[5];
 	char s[2];
   } rc;
+
   struct {
 	int16_t x;
 	int16_t y;
 	int16_t z;
 	uint8_t press_l;
 	uint8_t press_r;
+
+	int ix;
+	int iy;
+	int iz;
+
   } mouse;
   struct {
 	uint16_t v;
@@ -82,7 +88,7 @@ typedef struct {
 /* ----------------------- Internal Data ----------------------------------- */
 
 extern void remote_control_init (void);
-extern const RC_ctrl_t *get_remote_control_point (void);
+extern RC_ctrl_t *get_remote_control_point (void);
 extern uint8_t RC_data_is_error (void);
 extern void slove_RC_lost (void);
 extern void slove_data_error (void);

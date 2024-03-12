@@ -349,7 +349,6 @@ int app_PID_Calculate (void)
 //
 //  return 0;
   motor_measure_t *motinfo = (motor_measure_t *) get_measure_pointer (0);
-  chassis_transported_controller_data *rc_chsas = get_rc_data_from_chassis_pointer ();
   // HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
   for (int i = 0; i < 4;)
 	{

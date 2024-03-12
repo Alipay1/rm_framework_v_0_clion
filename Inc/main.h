@@ -50,7 +50,7 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
+void Error_Handler (void);
 
 /* USER CODE BEGIN EFP */
 
@@ -86,7 +86,7 @@ void Error_Handler(void);
 #define CS1_GYRO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-#define configMOTOR_ALARM_TEMPERATURE 999
+#define configMOTOR_ALARM_TEMPERATURE 80
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
