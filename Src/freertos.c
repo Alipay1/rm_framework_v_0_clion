@@ -49,6 +49,7 @@
 
 #include "usbd_cdc_if.h"
 #include "bsp_isr.h"
+#include "app_motor.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedValue"
@@ -209,11 +210,11 @@ const osThreadAttr_t UART1RxTask_attributes = {
 	.stack_size = sizeof (UART1RxTaskBuffer),
 	.priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for MOTOR_TEMPTask */
-osThreadId_t MOTOR_TEMPTaskHandle;
-const osThreadAttr_t MOTOR_TEMPTask_attributes = {
-	.name = "MOTOR_TEMPTask",
-	.stack_size = 256 * 4,
+/* Definitions for MOTORTask */
+osThreadId_t MOTORTaskHandle;
+const osThreadAttr_t MOTORTask_attributes = {
+	.name = "MOTORTask",
+	.stack_size = 512 * 4,
 	.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for RunTimeStats */
@@ -282,34 +283,22 @@ const osEventFlagsAttr_t Key_e_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartINSTask (void *argument);
-
 void StartLEDTask (void *argument);
-
 void StartBUZTask (void *argument);
-
 void StartCANTask (void *argument);
-
 void StartUART1Task (void *argument);
-
 void StartUART6Task (void *argument);
-
 void StartSERVOTask (void *argument);
-
 void StartSTEP_RESPONSETask (void *argument);
-
 void StartUART6RxTask (void *argument);
-
 void StartUART1RxTask (void *argument);
-
-void StartMOTOR_TEMPTask (void *argument);
-
+void StartMOTORTask (void *argument);
 void StartTask12 (void *argument);
 
 void MX_FREERTOS_Init (void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
 void configureTimerForRunTimeStats (void);
-
 unsigned long getRunTimeCounterValue (void);
 
 /* USER CODE BEGIN 1 */
@@ -399,8 +388,8 @@ void MX_FREERTOS_Init (void)
   /* creation of UART1RxTask */
   UART1RxTaskHandle = osThreadNew (StartUART1RxTask, NULL, &UART1RxTask_attributes);
 
-  /* creation of MOTOR_TEMPTask */
-  MOTOR_TEMPTaskHandle = osThreadNew (StartMOTOR_TEMPTask, NULL, &MOTOR_TEMPTask_attributes);
+  /* creation of MOTORTask */
+  MOTORTaskHandle = osThreadNew (StartMOTORTask, NULL, &MOTORTask_attributes);
 
   /* creation of RunTimeStats */
   RunTimeStatsHandle = osThreadNew (StartTask12, NULL, &RunTimeStats_attributes);
@@ -534,10 +523,10 @@ void StartCANTask (void *argument)
 
   PID_Setup ();
 
-  PID *wheel0 = pid_get_struct_pointer (0, NORMAL_MOTOR);
-  PID *wheel1 = pid_get_struct_pointer (1, NORMAL_MOTOR);
-  PID *wheel2 = pid_get_struct_pointer (2, NORMAL_MOTOR);
-  PID *wheel3 = pid_get_struct_pointer (3, NORMAL_MOTOR);
+  PID *wheel0 = pid_get_ptr (0);
+  PID *wheel1 = pid_get_ptr (1);
+  PID *wheel2 = pid_get_ptr (2);
+  PID *wheel3 = pid_get_ptr (3);
   motor_measure_t *motor0 = get_measure_pointer (0);
   motor_measure_t *motor1 = get_measure_pointer (1);
   motor_measure_t *motor2 = get_measure_pointer (2);
@@ -545,23 +534,26 @@ void StartCANTask (void *argument)
 
   const RC_ctrl_t *rc = get_remote_control_point ();
 
-  PID *servo0_pos = pid_get_struct_pointer (4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  PID *servo0_spd = pid_get_struct_pointer (4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo0_pos = pid_get_ptr (4 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo0_spd = pid_get_ptr (4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
   motor_measure_t *motor4 = get_measure_pointer (4);
 
-  PID *servo1_pos = pid_get_struct_pointer (5 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  PID *servo1_spd = pid_get_struct_pointer (5, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo1_pos = pid_get_ptr (5 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo1_spd = pid_get_ptr (5);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
   motor_measure_t *motor5 = get_measure_pointer (5);
 
-  PID *servo2_pos = pid_get_struct_pointer (6 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  PID *servo2_spd = pid_get_struct_pointer (6, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo2_pos = pid_get_ptr (6 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo2_spd = pid_get_ptr (6);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
   motor_measure_t *motor6 = get_measure_pointer (6);
 
-  PID *servo3_pos = pid_get_struct_pointer (7 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  PID *servo3_spd = pid_get_struct_pointer (7, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo3_pos = pid_get_ptr (7 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo3_spd = pid_get_ptr (7);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
   motor_measure_t *motor7 = get_measure_pointer (7);
 
   app_nav_t *nav = get_navigation_p ();
+
+  PID *raw_motor_pid = pid_get_raw_ptr (0);//获取速度环pid原始结构体
+
 
   /* Infinite loop */
   for (;;)
@@ -595,9 +587,10 @@ void StartCANTask (void *argument)
 	  PID_Calculate_single (wheel0);
 	  PID_Calculate_single (wheel1);
 	  PID_Calculate_single (wheel2);
-	  PID_Calculate_single (wheel3);
+//	  PID_Calculate_single (wheel3);
 
-	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
+//	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
+//	  bsp_printf (BSP_UART1, "%f,%f\r\n", servo1_spd->output, (raw_motor_pid + 4)->output);
 
 	  CAN_SendMessage (CAN_CHANNEL_2, ECD_REPORT,
 					   motor5->ecd, 0, 0, 0);
@@ -811,53 +804,37 @@ void StartUART1RxTask (void *argument)
   /* USER CODE END StartUART1RxTask */
 }
 
-/* USER CODE BEGIN Header_StartMOTOR_TEMPTask */
+/* USER CODE BEGIN Header_StartMOTORTask */
 /**
-* @brief Function implementing the MOTOR_TEMPTask thread.
+* @brief Function implementing the MOTORTask thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartMOTOR_TEMPTask */
-void StartMOTOR_TEMPTask (void *argument)
+/* USER CODE END Header_StartMOTORTask */
+void StartMOTORTask (void *argument)
 {
-  /* USER CODE BEGIN StartMOTOR_TEMPTask */
-  motor_measure_t *motor = get_measure_pointer (0);
-  uint8_t temperature[BSP_CAN_TOTAL_MORTOR_COUNT] = {0};
-  uint8_t temp = 0;
+  /* USER CODE BEGIN StartMOTORTask */
+  uint32_t state = 0;
+  PID *motor_pid = pid_get_ptr (0);
   /* Infinite loop */
   for (;;)
 	{
-	  /*reset temp to 0*/
-	  temp = 0;
+	  app_motor_online_detect ();
 
-	  /*collect temperature together*/
-	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
+	  for (int i = 0; i < 8; i++)
 		{
-		  temperature[i] = (motor + i)->temperate;
-		  i++;
-		}
-
-	  /*find max temperature*/
-	  for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;)
-		{
-		  if (temperature[i] > temp)
+		  if (get_motor_mon_ptr (i)->online.online == true)
 			{
-			  temp = temperature[i];
+//			  state |= 1 << i;
 			}
-		  i++;
 		}
+//	  bsp_printf (BSP_UART1, "%x\r\n", state);
+//	  state = 0;
 
-	  /*configMOTOR_ALARM_TEMPERATURE defined in main.h*/
-	  if (temp >= configMOTOR_ALARM_TEMPERATURE)
-		{
-		  //todo call somthing safer to alarm
-		  __disable_irq ();
-		  while (1);
-		}
 
-	  osDelay (100);
+	  osDelay (10);
 	}
-  /* USER CODE END StartMOTOR_TEMPTask */
+  /* USER CODE END StartMOTORTask */
 }
 
 /* USER CODE BEGIN Header_StartTask12 */
@@ -884,6 +861,43 @@ void StartTask12 (void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+
+//void app_motor_offline_callback (uint8_t motor_num)
+//{
+//////  bsp_printf (BSP_UART1, "ERR MOT:%d\r\n", motor_num);
+//
+//  if (motor_num == 4)
+//	{
+//	  bsp_led_toggle (LED_RED);
+//	  PID *motor_pid = pid_get_ptr (motor_num);//获取速度环pid结构体
+//	  motor_pid->active = false;
+//	  motor_pid->output = 0;
+//	  motor_pid->integral = 0;
+//	  PID *motor_pid_pos = pid_get_ptr (motor_num + 4);//获取速度环pid结构体
+//	  motor_pid_pos->active = false;
+//	  motor_pid_pos->output = 0;
+//	  motor_pid_pos->integral = 0;
+//	}
+//
+//
+//
+////  PID *motor_pid = pid_get_ptr (motor_num);//获取速度环pid结构体
+////  PID *raw_motor_pid = pid_get_raw_ptr (motor_num);//获取速度环pid原始结构体
+////
+////  motor_pid->active = false;
+////  motor_pid->integral = 0;
+////  motor_pid->output = 0;
+////  if (motor_num > 3 && motor_num < 8)//如果是6020的ID范围则同时获取位置环pid结构体
+////	{
+////	  PID *motor_pid_pos = pid_get_ptr (motor_num + 4);//获取速度环pid结构体
+////	  PID *raw_motor_pid_pos = pid_get_raw_ptr (motor_num + 4);//获取速度环pid原始结构体
+////
+//////	  *motor_pid_pos = *raw_motor_pid_pos;
+////	  motor_pid_pos->active = false;
+////	  motor_pid_pos->integral = 0;
+////	  motor_pid_pos->output = 0;
+////	}
+//}
 
 #pragma clang diagnostic pop
 /* USER CODE END Application */

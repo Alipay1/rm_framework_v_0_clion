@@ -8,8 +8,6 @@
 #include "arm_math.h"
 #include "app_pid.h"
 
-#include "chassis.h"
-
 //-RC->rc.ch[2] Vy
 //RC->rc.ch[3]  Vx
 //RC->rc.ch[0]  Vw
@@ -18,12 +16,14 @@ static app_nav_t nav = {0};
 
 extern RC_ctrl_t rc_ctrl;
 
-float map_degree_to_8191(float input) {
-    return input * 22.7527777777777777F;
+float map_degree_to_8191 (float input)
+{
+  return input * 22.7527777777777777F;
 }
 
-app_nav_t *get_navigation_p(void) {
-    return &nav;
+app_nav_t *get_navigation_p (void)
+{
+  return &nav;
 }
 
 //fp64 atan_angle[4];
@@ -35,22 +35,23 @@ app_nav_t *get_navigation_p(void) {
 //#define MS7010_BL_ANGLE (3751 -1024)
 //#define MS7010_BR_ANGLE (4239 +1024)
 
-void nav_main(void) {
-    PID *wheel0 = pid_get_struct_pointer(0, NORMAL_MOTOR);
-    PID *wheel1 = pid_get_struct_pointer(1, NORMAL_MOTOR);
-    PID *wheel2 = pid_get_struct_pointer(2, NORMAL_MOTOR);
-    PID *wheel3 = pid_get_struct_pointer(3, NORMAL_MOTOR);
+void nav_main (void)
+{
+  PID *wheel0 = pid_get_ptr (0);
+  PID *wheel1 = pid_get_ptr (1);
+  PID *wheel2 = pid_get_ptr (2);
+  PID *wheel3 = pid_get_ptr (3);
 
-    PID *servo0_pos = pid_get_struct_pointer(4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-    PID *servo1_pos = pid_get_struct_pointer(5 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-    PID *servo2_pos = pid_get_struct_pointer(6 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-    PID *servo3_pos = pid_get_struct_pointer(7 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo0_pos = pid_get_ptr (4 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo1_pos = pid_get_ptr (5 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo2_pos = pid_get_ptr (6 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
+  PID *servo3_pos = pid_get_ptr (7 + 4);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
 
-    motor_measure_t *gm6020 = get_measure_pointer(4);
+  motor_measure_t *gm6020 = get_measure_pointer (4);
 
-    nav.Vx = (float) rc_ctrl.rc.ch[3];
-    nav.Vy = (float) -rc_ctrl.rc.ch[2];
-    nav.Vw = (float) -rc_ctrl.rc.ch[0];
+  nav.Vx = (float) rc_ctrl.rc.ch[3];
+  nav.Vy = (float) -rc_ctrl.rc.ch[2];
+  nav.Vw = (float) -rc_ctrl.rc.ch[0];
 
 //  float temp[4] = {0};
 //
@@ -127,22 +128,19 @@ void nav_main(void) {
 //	  i++;
 //	}
 
-    nav.Vx *= 0.03F;
-    nav.Vy *= -0.03F;
-    nav.Vw *= -0.0001F;
+  nav.Vx *= 0.03F;
+  nav.Vy *= -0.03F;
+  nav.Vw *= -0.0001F;
 
-    chassis_vector_to_M7010_wheel_angle(nav.Vy, nav.Vx, nav.Vw, nav.theta);
-    chassis_vector_to_M3508_wheel_speed(nav.Vy, nav.Vx, nav.Vw, nav.V);
+  wheel0->ideal = nav.V[0];
+  wheel1->ideal = nav.V[1];
+  wheel2->ideal = nav.V[2];
+  wheel3->ideal = nav.V[3];
 
-    wheel0->ideal = nav.V[0];
-    wheel1->ideal = nav.V[1];
-    wheel2->ideal = nav.V[2];
-    wheel3->ideal = nav.V[3];
-
-    servo0_pos->ideal = 0 + nav.theta[0];
-    servo1_pos->ideal = 0 + nav.theta[1];
-    servo2_pos->ideal = 0 + nav.theta[2];
-    servo3_pos->ideal = 0 + nav.theta[3];
+  servo0_pos->ideal = 0 + nav.theta[0];
+  servo1_pos->ideal = 0 + nav.theta[1];
+  servo2_pos->ideal = 0 + nav.theta[2];
+  servo3_pos->ideal = 0 + nav.theta[3];
 //
 //  servo0_pos->ideal = DEFALT_DGR_0 + map_degree_to_8191 (nav.theta[0] * 57.2957795130823F * -0.5F);
 //  servo1_pos->ideal = DEFALT_DGR_1 + map_degree_to_8191 (nav.theta[1] * 57.2957795130823F * -0.5F);

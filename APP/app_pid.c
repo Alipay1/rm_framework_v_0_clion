@@ -24,138 +24,144 @@ float abs_f (float value)
 }
 
 //__attribute__ ((section(".ccmram")))
-static PID pid_speed_struct[PID_SPEED_STRUCT_NUM] = {0};
+static PID pid_struct[PID_SPEED_STRUCT_NUM] = {0};
+PID raw_pid_struct[PID_SPEED_STRUCT_NUM] = {0};
 
 int PID_Setup (void)
 {
   uint8_t i = 0;
-  (pid_speed_struct + i)->motor_number = 0;
-  (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = -6000;
-  (pid_speed_struct + i)->Kp = 5.0f; /*1*/
-  (pid_speed_struct + i)->Ki = 0.02f;
-  (pid_speed_struct + i)->Kd = 0.1f;
-  (pid_speed_struct + i)->Limit_Iout = 30000;
-  (pid_speed_struct + i)->Limit_Out = 30000;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 0;
+  (pid_struct + i)->active = true;
+  (pid_struct + i)->ideal = -6000;
+  (pid_struct + i)->Kp = 5.0f; /*1*/
+  (pid_struct + i)->Ki = 0.02f;
+  (pid_struct + i)->Kd = 0.1f;
+  (pid_struct + i)->Limit_Iout = 30000;
+  (pid_struct + i)->Limit_Out = 30000;
+  (pid_struct + i)->Error = 0;
   i++;
-  (pid_speed_struct + i)->motor_number = 1;
-  (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = 6000;
-  (pid_speed_struct + i)->Kp = 5.0f; /*2*/
-  (pid_speed_struct + i)->Ki = 0.02f;
-  (pid_speed_struct + i)->Kd = 0.1f;
-  (pid_speed_struct + i)->Limit_Iout = 30000;
-  (pid_speed_struct + i)->Limit_Out = 30000;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 1;
+  (pid_struct + i)->active = true;
+  (pid_struct + i)->ideal = 6000;
+  (pid_struct + i)->Kp = 5.0f; /*2*/
+  (pid_struct + i)->Ki = 0.02f;
+  (pid_struct + i)->Kd = 0.1f;
+  (pid_struct + i)->Limit_Iout = 30000;
+  (pid_struct + i)->Limit_Out = 30000;
+  (pid_struct + i)->Error = 0;
   i++;
-  (pid_speed_struct + i)->motor_number = 2;
-  (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = -2500;
-  (pid_speed_struct + i)->Kp = 6.5f; /*3*/
-  (pid_speed_struct + i)->Ki = 0.5f;
-  (pid_speed_struct + i)->Kd = 0.0f;
-  (pid_speed_struct + i)->Limit_Iout = 16384;
-  (pid_speed_struct + i)->Limit_Out = 16384;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 2;
+  (pid_struct + i)->active = true;
+  (pid_struct + i)->ideal = -2500;
+  (pid_struct + i)->Kp = 6.5f; /*3*/
+  (pid_struct + i)->Ki = 0.5f;
+  (pid_struct + i)->Kd = 0.0f;
+  (pid_struct + i)->Limit_Iout = 16384;
+  (pid_struct + i)->Limit_Out = 16384;
+  (pid_struct + i)->Error = 0;
   i++;
-  (pid_speed_struct + i)->motor_number = 3;
-  (pid_speed_struct + i)->active = false;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*4*/
-  (pid_speed_struct + i)->Ki = 0;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 30000;
-  (pid_speed_struct + i)->Limit_Out = 30000;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 3;
+  (pid_struct + i)->active = false;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 0; /*4*/
+  (pid_struct + i)->Ki = 0;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = 30000;
+  (pid_struct + i)->Limit_Out = 30000;
+  (pid_struct + i)->Error = 0;
   i++;
-  (pid_speed_struct + i)->motor_number = 4;
-  (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 6000.0F; /*5*/
-  (pid_speed_struct + i)->Ki = 115.0F;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 30000;
-  (pid_speed_struct + i)->Limit_Out = 30000;
-  (pid_speed_struct + i)->Error = 0;
-  (pid_speed_struct + i)->if_angular_velocity_mode = true;
-  (pid_speed_struct + i)->eula = APP_PID_YAW;
+  (pid_struct + i)->motor_number = 4;
+  (pid_struct + i)->active = true;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 6000.0F; /*5*/
+  (pid_struct + i)->Ki = 115.0F;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = 15000;
+  (pid_struct + i)->Limit_Out = 15000;
+  (pid_struct + i)->Error = 0;
+  (pid_struct + i)->if_angular_velocity_mode = true;
+  (pid_struct + i)->eula = APP_PID_YAW;
   i++;
-  (pid_speed_struct + i)->motor_number = 5;
-  (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 5500.0f; /*6*/
-  (pid_speed_struct + i)->Ki = 140.0f;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 30000;
-  (pid_speed_struct + i)->Limit_Out = 30000;
-  (pid_speed_struct + i)->Error = 0;
-  (pid_speed_struct + i)->if_angular_velocity_mode = true;
-  (pid_speed_struct + i)->eula = APP_PID_PIT;
+  (pid_struct + i)->motor_number = 5;
+  (pid_struct + i)->active = true;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 5500.0f; /*6*/
+  (pid_struct + i)->Ki = 140.0f;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = 15000;
+  (pid_struct + i)->Limit_Out = 15000;
+  (pid_struct + i)->Error = 0;
+  (pid_struct + i)->if_angular_velocity_mode = true;
+  (pid_struct + i)->eula = APP_PID_PIT;
   i++;
-  (pid_speed_struct + i)->motor_number = 6;
-  (pid_speed_struct + i)->active = false;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*7*/
-  (pid_speed_struct + i)->Ki = 0;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 30000;
-  (pid_speed_struct + i)->Limit_Out = 30000;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 6;
+  (pid_struct + i)->active = false;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 0; /*7*/
+  (pid_struct + i)->Ki = 0;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = 30000;
+  (pid_struct + i)->Limit_Out = 30000;
+  (pid_struct + i)->Error = 0;
   i++;
-  (pid_speed_struct + i)->motor_number = 7;
-  (pid_speed_struct + i)->active = false;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0; /*8*/
-  (pid_speed_struct + i)->Ki = 0;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = 30000;
-  (pid_speed_struct + i)->Limit_Out = 30000;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 7;
+  (pid_struct + i)->active = false;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 0; /*8*/
+  (pid_struct + i)->Ki = 0;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = 30000;
+  (pid_struct + i)->Limit_Out = 30000;
+  (pid_struct + i)->Error = 0;
   i++;
-  (pid_speed_struct + i)->motor_number = 8;
-  (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.1F; /*9 motor5 6020 no.1 position YAW*/
-  (pid_speed_struct + i)->Ki = 0.0000F;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Error = 0;
-  (pid_speed_struct + i)->if_angular_velocity_mode = true;
-  (pid_speed_struct + i)->eula = APP_PID_YAW;
+  (pid_struct + i)->motor_number = 8;
+  (pid_struct + i)->active = true;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 0.1F; /*9 motor5 6020 no.1 position YAW*/
+  (pid_struct + i)->Ki = 0.0000F;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = SERVO_SPD_LIM;
+  (pid_struct + i)->Limit_Out = SERVO_SPD_LIM;
+  (pid_struct + i)->Error = 0;
+  (pid_struct + i)->if_angular_velocity_mode = true;
+  (pid_struct + i)->eula = APP_PID_YAW;
   i++;
-  (pid_speed_struct + i)->motor_number = 9;
-  (pid_speed_struct + i)->active = true;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.12F; /*10 PITCH*/
-  (pid_speed_struct + i)->Ki = 0.000001F;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Error = 0;
-  (pid_speed_struct + i)->if_angular_velocity_mode = true;
-  (pid_speed_struct + i)->eula = APP_PID_PIT;
+  (pid_struct + i)->motor_number = 9;
+  (pid_struct + i)->active = true;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 0.12F; /*10 PITCH*/
+  (pid_struct + i)->Ki = 0.000001F;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = SERVO_SPD_LIM;
+  (pid_struct + i)->Limit_Out = SERVO_SPD_LIM;
+  (pid_struct + i)->Error = 0;
+  (pid_struct + i)->if_angular_velocity_mode = true;
+  (pid_struct + i)->eula = APP_PID_PIT;
   i++;
-  (pid_speed_struct + i)->motor_number = 10;
-  (pid_speed_struct + i)->active = false;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.15F; /*11*/
-  (pid_speed_struct + i)->Ki = 0.001F;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 10;
+  (pid_struct + i)->active = false;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 0.15F; /*11*/
+  (pid_struct + i)->Ki = 0.001F;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = SERVO_SPD_LIM;
+  (pid_struct + i)->Limit_Out = SERVO_SPD_LIM;
+  (pid_struct + i)->Error = 0;
   i++;
-  (pid_speed_struct + i)->motor_number = 11;
-  (pid_speed_struct + i)->active = false;
-  (pid_speed_struct + i)->ideal = 0;
-  (pid_speed_struct + i)->Kp = 0.15F; /*12*/
-  (pid_speed_struct + i)->Ki = 0.001F;
-  (pid_speed_struct + i)->Kd = 0;
-  (pid_speed_struct + i)->Limit_Iout = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Limit_Out = SERVO_SPD_LIM;
-  (pid_speed_struct + i)->Error = 0;
+  (pid_struct + i)->motor_number = 11;
+  (pid_struct + i)->active = false;
+  (pid_struct + i)->ideal = 0;
+  (pid_struct + i)->Kp = 0.15F; /*12*/
+  (pid_struct + i)->Ki = 0.001F;
+  (pid_struct + i)->Kd = 0;
+  (pid_struct + i)->Limit_Iout = SERVO_SPD_LIM;
+  (pid_struct + i)->Limit_Out = SERVO_SPD_LIM;
+  (pid_struct + i)->Error = 0;
+
+  for (uint8_t j = 0; j < PID_SPEED_STRUCT_NUM; j++)
+	{
+	  raw_pid_struct[j] = pid_struct[j];
+	}
   return 0;
 }
 
@@ -321,26 +327,26 @@ int app_PID_Calculate (void)
 //
 //  for (int i = 0; i < 4;)
 //	{
-//	  (pid_speed_struct + i)->actual = get_measure_pointer (i)->speed_rpm;
+//	  (pid_struct + i)->actual = get_measure_pointer (i)->speed_rpm;
 //
-//	  if ((pid_speed_struct + i)->active == true)
+//	  if ((pid_struct + i)->active == true)
 //		{
-//		  if ((pid_speed_struct + i)->Error == 0)
+//		  if ((pid_struct + i)->Error == 0)
 //			{
 //
-//			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
-//			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
+//			  (pid_struct + i)->err = (pid_struct + i)->ideal - (pid_struct + i)->actual;
+//			  (pid_struct + i)->integral += (pid_struct + i)->err;
 //
-//			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
-//			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
-//			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
-//											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
-//												+ (pid_speed_struct + i)->err_last_last);
+//			  (pid_struct + i)->Pout = (pid_struct + i)->Kp * (pid_struct + i)->err;
+//			  (pid_struct + i)->Iout = (pid_struct + i)->Ki * (pid_struct + i)->integral;
+//			  (pid_struct + i)->Dout = (pid_struct + i)->Kd
+//											 * ((pid_struct + i)->err - 2.0f * (pid_struct + i)->err_last
+//												+ (pid_struct + i)->err_last_last);
 //
-//			  (pid_speed_struct + i)->output =
-//				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
-//			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
-//			  PID_Out_Limit (pid_speed_struct + i);
+//			  (pid_struct + i)->output =
+//				  (pid_struct + i)->Pout + (pid_struct + i)->Iout + (pid_struct + i)->Dout;
+//			  (pid_struct + i)->err_last = (pid_struct + i)->err;
+//			  PID_Out_Limit (pid_struct + i);
 //			}
 //		}
 //	  i++;
@@ -352,24 +358,24 @@ int app_PID_Calculate (void)
   // HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
   for (int i = 0; i < 4;)
 	{
-	  if ((pid_speed_struct + i)->active == true)
+	  if ((pid_struct + i)->active == true)
 		{
-		  if ((pid_speed_struct + i)->Error == 0)
+		  if ((pid_struct + i)->Error == 0)
 			{
-			  (pid_speed_struct + i)->actual = motinfo->speed_rpm;
-			  (pid_speed_struct + i)->err = (pid_speed_struct + i)->ideal - (pid_speed_struct + i)->actual;
-			  (pid_speed_struct + i)->integral += (pid_speed_struct + i)->err;
+			  (pid_struct + i)->actual = motinfo->speed_rpm;
+			  (pid_struct + i)->err = (pid_struct + i)->ideal - (pid_struct + i)->actual;
+			  (pid_struct + i)->integral += (pid_struct + i)->err;
 
-			  (pid_speed_struct + i)->Pout = (pid_speed_struct + i)->Kp * (pid_speed_struct + i)->err;
-			  (pid_speed_struct + i)->Iout = (pid_speed_struct + i)->Ki * (pid_speed_struct + i)->integral;
-			  (pid_speed_struct + i)->Dout = (pid_speed_struct + i)->Kd
-											 * ((pid_speed_struct + i)->err - 2.0f * (pid_speed_struct + i)->err_last
-												+ (pid_speed_struct + i)->err_last_last);
+			  (pid_struct + i)->Pout = (pid_struct + i)->Kp * (pid_struct + i)->err;
+			  (pid_struct + i)->Iout = (pid_struct + i)->Ki * (pid_struct + i)->integral;
+			  (pid_struct + i)->Dout = (pid_struct + i)->Kd
+									   * ((pid_struct + i)->err - 2.0f * (pid_struct + i)->err_last
+										  + (pid_struct + i)->err_last_last);
 
-			  (pid_speed_struct + i)->output =
-				  (pid_speed_struct + i)->Pout + (pid_speed_struct + i)->Iout + (pid_speed_struct + i)->Dout;
-			  (pid_speed_struct + i)->err_last = (pid_speed_struct + i)->err;
-			  PID_Out_Limit (pid_speed_struct + i);
+			  (pid_struct + i)->output =
+				  (pid_struct + i)->Pout + (pid_struct + i)->Iout + (pid_struct + i)->Dout;
+			  (pid_struct + i)->err_last = (pid_struct + i)->err;
+			  PID_Out_Limit (pid_struct + i);
 			}
 		}
 	  i++;
@@ -378,37 +384,22 @@ int app_PID_Calculate (void)
   return 0;
 }
 
-PID *pid_get_struct_pointer (uint32_t num, uint32_t in_array)
+PID *pid_get_ptr (uint32_t num)
 {
-  switch (in_array)
+  if (num > PID_SPEED_STRUCT_NUM)
 	{
-	  case NORMAL_MOTOR: return pid_speed_struct + num;
-	  break;
-	  case PITCH_MOTOR:
-		switch (num)
-		  {
-//			case 0: return &PITCH_V;
-//			break;
-//			case 1: return &PITCH_A;
-//			break;
-			default: return NULL;
-			break;
-		  }
-	  case YAW_MOTOR:
-		switch (num)
-		  {
-//			case 0: return &YAW_V;
-//			break;
-//			case 1: return &YAW_P;
-//			break;
-			default: return NULL;
-			break;
-		  }
-	  break;
-
-	  default: return NULL;
-	  break;
+	  return NULL;
 	}
+  return pid_struct + num;
+}
+
+PID *pid_get_raw_ptr (uint32_t num)
+{
+  if (num > PID_SPEED_STRUCT_NUM)
+	{
+	  return NULL;
+	}
+  return raw_pid_struct + num;
 }
 
 int pid_sscanf (char *input)
@@ -435,7 +426,7 @@ int pid_sscanf (char *input)
 	}
   else
 	{
-	  apply = pid_get_struct_pointer (motor_num, NORMAL_MOTOR);
+	  apply = pid_get_ptr (motor_num);
 	}
 
   /*active the motor*/

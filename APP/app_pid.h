@@ -64,12 +64,6 @@ typedef enum {
   //    NONE = 0x80,                 // 1000 0000
 } motor_error_t;
 
-enum {
-  NORMAL_MOTOR = 0,
-  PITCH_MOTOR = 5,
-  YAW_MOTOR = 6,
-};
-
 int PID_Setup (void);
 int app_PID_Calculate (void);
 
@@ -77,7 +71,8 @@ float abs_f (float value);
 
 float32_t PID_PITCH_Union_Calculate (PID *pxStructV, PID *pxStructA, float absolute_angle);
 float32_t PID_YAW_Union_Calculate (PID *pxStructV, PID *pxStructP, float position, bool mode);
-PID *pid_get_struct_pointer (uint32_t num, uint32_t in_array);
+PID *pid_get_ptr (uint32_t num);
+PID *pid_get_raw_ptr (uint32_t num);
 int32_t get_yaw_motor_position (void);
 int PID_Calculate_seper (PID *input_spd, PID *input_pos);
 int PID_Calculate_single (PID *input_spd);

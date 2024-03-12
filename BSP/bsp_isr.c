@@ -21,6 +21,7 @@
 
 #include "app_pid.h"
 #include "app_rc.h"
+#include "app_motor.h"
 
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
@@ -106,7 +107,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 			  int i = rx_header.StdId - CAN_3508_M1_ID;
 			  bsp_can_get_motor_measure (get_measure_pointer (i), rx_data);
 			  bsp_can_updateTotalAngle (i);
-
+			  app_motor_online (i);
 			  break;
 			}
 
