@@ -31,7 +31,7 @@ int PID_Setup (void)
 {
   uint8_t i = 0;
   (pid_struct + i)->motor_number = 0;
-  (pid_struct + i)->active = true;
+  (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = -6000;
   (pid_struct + i)->Kp = 5.0f; /*1*/
   (pid_struct + i)->Ki = 0.02f;
@@ -41,7 +41,7 @@ int PID_Setup (void)
   (pid_struct + i)->Error = 0;
   i++;
   (pid_struct + i)->motor_number = 1;
-  (pid_struct + i)->active = true;
+  (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = 6000;
   (pid_struct + i)->Kp = 5.0f; /*2*/
   (pid_struct + i)->Ki = 0.02f;
@@ -51,7 +51,7 @@ int PID_Setup (void)
   (pid_struct + i)->Error = 0;
   i++;
   (pid_struct + i)->motor_number = 2;
-  (pid_struct + i)->active = true;
+  (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = -2500;
   (pid_struct + i)->Kp = 6.5f; /*3*/
   (pid_struct + i)->Ki = 0.5f;
@@ -71,7 +71,7 @@ int PID_Setup (void)
   (pid_struct + i)->Error = 0;
   i++;
   (pid_struct + i)->motor_number = 4;
-  (pid_struct + i)->active = true;
+  (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = 0;
   (pid_struct + i)->Kp = 6000.0F; /*5*/
   (pid_struct + i)->Ki = 115.0F;
@@ -83,7 +83,7 @@ int PID_Setup (void)
   (pid_struct + i)->eula = APP_PID_YAW;
   i++;
   (pid_struct + i)->motor_number = 5;
-  (pid_struct + i)->active = true;
+  (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = 0;
   (pid_struct + i)->Kp = 5500.0f; /*6*/
   (pid_struct + i)->Ki = 140.0f;
@@ -115,7 +115,7 @@ int PID_Setup (void)
   (pid_struct + i)->Error = 0;
   i++;
   (pid_struct + i)->motor_number = 8;
-  (pid_struct + i)->active = true;
+  (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = 0;
   (pid_struct + i)->Kp = 0.1F; /*9 motor5 6020 no.1 position YAW*/
   (pid_struct + i)->Ki = 0.0000F;
@@ -127,7 +127,7 @@ int PID_Setup (void)
   (pid_struct + i)->eula = APP_PID_YAW;
   i++;
   (pid_struct + i)->motor_number = 9;
-  (pid_struct + i)->active = true;
+  (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = 0;
   (pid_struct + i)->Kp = 0.12F; /*10 PITCH*/
   (pid_struct + i)->Ki = 0.000001F;
