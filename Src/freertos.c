@@ -92,184 +92,184 @@ void print(char *fmt, ...) {
 /* USER CODE END Variables */
 /* Definitions for INSTask */
 osThreadId_t INSTaskHandle;
-uint32_t INSTaskBuffer[1024];
+uint32_t INSTaskBuffer[ 1024 ];
 osStaticThreadDef_t INSTaskControlBlock;
 const osThreadAttr_t INSTask_attributes = {
-        .name = "INSTask",
-        .cb_mem = &INSTaskControlBlock,
-        .cb_size = sizeof(INSTaskControlBlock),
-        .stack_mem = &INSTaskBuffer[0],
-        .stack_size = sizeof(INSTaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "INSTask",
+  .cb_mem = &INSTaskControlBlock,
+  .cb_size = sizeof(INSTaskControlBlock),
+  .stack_mem = &INSTaskBuffer[0],
+  .stack_size = sizeof(INSTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LEDTask */
 osThreadId_t LEDTaskHandle;
-uint32_t LEDTaslBuffer[128];
+uint32_t LEDTaslBuffer[ 128 ];
 osStaticThreadDef_t LEDTaslControlBlock;
 const osThreadAttr_t LEDTask_attributes = {
-        .name = "LEDTask",
-        .cb_mem = &LEDTaslControlBlock,
-        .cb_size = sizeof(LEDTaslControlBlock),
-        .stack_mem = &LEDTaslBuffer[0],
-        .stack_size = sizeof(LEDTaslBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "LEDTask",
+  .cb_mem = &LEDTaslControlBlock,
+  .cb_size = sizeof(LEDTaslControlBlock),
+  .stack_mem = &LEDTaslBuffer[0],
+  .stack_size = sizeof(LEDTaslBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for BUZTask */
 osThreadId_t BUZTaskHandle;
-uint32_t BUZTaskBuffer[128];
+uint32_t BUZTaskBuffer[ 128 ];
 osStaticThreadDef_t BUZTaskControlBlock;
 const osThreadAttr_t BUZTask_attributes = {
-        .name = "BUZTask",
-        .cb_mem = &BUZTaskControlBlock,
-        .cb_size = sizeof(BUZTaskControlBlock),
-        .stack_mem = &BUZTaskBuffer[0],
-        .stack_size = sizeof(BUZTaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "BUZTask",
+  .cb_mem = &BUZTaskControlBlock,
+  .cb_size = sizeof(BUZTaskControlBlock),
+  .stack_mem = &BUZTaskBuffer[0],
+  .stack_size = sizeof(BUZTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for CANTask */
 osThreadId_t CANTaskHandle;
-uint32_t CANTaskBuffer[4096];
+uint32_t CANTaskBuffer[ 4096 ];
 osStaticThreadDef_t CANTaskControlBlock;
 const osThreadAttr_t CANTask_attributes = {
-        .name = "CANTask",
-        .cb_mem = &CANTaskControlBlock,
-        .cb_size = sizeof(CANTaskControlBlock),
-        .stack_mem = &CANTaskBuffer[0],
-        .stack_size = sizeof(CANTaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "CANTask",
+  .cb_mem = &CANTaskControlBlock,
+  .cb_size = sizeof(CANTaskControlBlock),
+  .stack_mem = &CANTaskBuffer[0],
+  .stack_size = sizeof(CANTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for UART1Task */
 osThreadId_t UART1TaskHandle;
-uint32_t UART1TaskBuffer[1024];
+uint32_t UART1TaskBuffer[ 1024 ];
 osStaticThreadDef_t UART1TaskControlBlock;
 const osThreadAttr_t UART1Task_attributes = {
-        .name = "UART1Task",
-        .cb_mem = &UART1TaskControlBlock,
-        .cb_size = sizeof(UART1TaskControlBlock),
-        .stack_mem = &UART1TaskBuffer[0],
-        .stack_size = sizeof(UART1TaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "UART1Task",
+  .cb_mem = &UART1TaskControlBlock,
+  .cb_size = sizeof(UART1TaskControlBlock),
+  .stack_mem = &UART1TaskBuffer[0],
+  .stack_size = sizeof(UART1TaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for UART6Task */
 osThreadId_t UART6TaskHandle;
-uint32_t UART6TaskBuffer[1024];
+uint32_t UART6TaskBuffer[ 1024 ];
 osStaticThreadDef_t UART6TaskControlBlock;
 const osThreadAttr_t UART6Task_attributes = {
-        .name = "UART6Task",
-        .cb_mem = &UART6TaskControlBlock,
-        .cb_size = sizeof(UART6TaskControlBlock),
-        .stack_mem = &UART6TaskBuffer[0],
-        .stack_size = sizeof(UART6TaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "UART6Task",
+  .cb_mem = &UART6TaskControlBlock,
+  .cb_size = sizeof(UART6TaskControlBlock),
+  .stack_mem = &UART6TaskBuffer[0],
+  .stack_size = sizeof(UART6TaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for SERVOTask */
 osThreadId_t SERVOTaskHandle;
-uint32_t SERVOTaskBuffer[128];
+uint32_t SERVOTaskBuffer[ 128 ];
 osStaticThreadDef_t SERVOTaskControlBlock;
 const osThreadAttr_t SERVOTask_attributes = {
-        .name = "SERVOTask",
-        .cb_mem = &SERVOTaskControlBlock,
-        .cb_size = sizeof(SERVOTaskControlBlock),
-        .stack_mem = &SERVOTaskBuffer[0],
-        .stack_size = sizeof(SERVOTaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "SERVOTask",
+  .cb_mem = &SERVOTaskControlBlock,
+  .cb_size = sizeof(SERVOTaskControlBlock),
+  .stack_mem = &SERVOTaskBuffer[0],
+  .stack_size = sizeof(SERVOTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for STEP_RESPONSETa */
 osThreadId_t STEP_RESPONSETaHandle;
 const osThreadAttr_t STEP_RESPONSETa_attributes = {
-        .name = "STEP_RESPONSETa",
-        .stack_size = 256 * 4,
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "STEP_RESPONSETa",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for UART6RxTask */
 osThreadId_t UART6RxTaskHandle;
-uint32_t UART6RxTaskBuffer[512];
+uint32_t UART6RxTaskBuffer[ 512 ];
 osStaticThreadDef_t UART6RxTaskControlBlock;
 const osThreadAttr_t UART6RxTask_attributes = {
-        .name = "UART6RxTask",
-        .cb_mem = &UART6RxTaskControlBlock,
-        .cb_size = sizeof(UART6RxTaskControlBlock),
-        .stack_mem = &UART6RxTaskBuffer[0],
-        .stack_size = sizeof(UART6RxTaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "UART6RxTask",
+  .cb_mem = &UART6RxTaskControlBlock,
+  .cb_size = sizeof(UART6RxTaskControlBlock),
+  .stack_mem = &UART6RxTaskBuffer[0],
+  .stack_size = sizeof(UART6RxTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for UART1RxTask */
 osThreadId_t UART1RxTaskHandle;
-uint32_t UART1RxTaskBuffer[512];
+uint32_t UART1RxTaskBuffer[ 512 ];
 osStaticThreadDef_t UART1RxTaskControlBlock;
 const osThreadAttr_t UART1RxTask_attributes = {
-        .name = "UART1RxTask",
-        .cb_mem = &UART1RxTaskControlBlock,
-        .cb_size = sizeof(UART1RxTaskControlBlock),
-        .stack_mem = &UART1RxTaskBuffer[0],
-        .stack_size = sizeof(UART1RxTaskBuffer),
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "UART1RxTask",
+  .cb_mem = &UART1RxTaskControlBlock,
+  .cb_size = sizeof(UART1RxTaskControlBlock),
+  .stack_mem = &UART1RxTaskBuffer[0],
+  .stack_size = sizeof(UART1RxTaskBuffer),
+  .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for MOTOR_TEMPTask */
-osThreadId_t MOTOR_TEMPTaskHandle;
-const osThreadAttr_t MOTOR_TEMPTask_attributes = {
-        .name = "MOTOR_TEMPTask",
-        .stack_size = 256 * 4,
-        .priority = (osPriority_t) osPriorityLow,
+/* Definitions for MOTORTask */
+osThreadId_t MOTORTaskHandle;
+const osThreadAttr_t MOTORTask_attributes = {
+  .name = "MOTORTask",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for RunTimeStats */
 osThreadId_t RunTimeStatsHandle;
 const osThreadAttr_t RunTimeStats_attributes = {
-        .name = "RunTimeStats",
-        .stack_size = 512 * 4,
-        .priority = (osPriority_t) osPriorityLow,
+  .name = "RunTimeStats",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LED_q */
 osMessageQueueId_t LED_qHandle;
 const osMessageQueueAttr_t LED_q_attributes = {
-        .name = "LED_q"
+  .name = "LED_q"
 };
 /* Definitions for BUZ_q */
 osMessageQueueId_t BUZ_qHandle;
 const osMessageQueueAttr_t BUZ_q_attributes = {
-        .name = "BUZ_q"
+  .name = "BUZ_q"
 };
 /* Definitions for SERVO_q */
 osMessageQueueId_t SERVO_qHandle;
 const osMessageQueueAttr_t SERVO_q_attributes = {
-        .name = "SERVO_q"
+  .name = "SERVO_q"
 };
 /* Definitions for UART1_FIFO_mu */
 osMutexId_t UART1_FIFO_muHandle;
 osStaticMutexDef_t UART1_FIFO_muControlBlock;
 const osMutexAttr_t UART1_FIFO_mu_attributes = {
-        .name = "UART1_FIFO_mu",
-        .cb_mem = &UART1_FIFO_muControlBlock,
-        .cb_size = sizeof(UART1_FIFO_muControlBlock),
+  .name = "UART1_FIFO_mu",
+  .cb_mem = &UART1_FIFO_muControlBlock,
+  .cb_size = sizeof(UART1_FIFO_muControlBlock),
 };
 /* Definitions for UART6_FIFO_mu */
 osMutexId_t UART6_FIFO_muHandle;
 osStaticMutexDef_t UART6_FIFO_muControlBlock;
 const osMutexAttr_t UART6_FIFO_mu_attributes = {
-        .name = "UART6_FIFO_mu",
-        .cb_mem = &UART6_FIFO_muControlBlock,
-        .cb_size = sizeof(UART6_FIFO_muControlBlock),
+  .name = "UART6_FIFO_mu",
+  .cb_mem = &UART6_FIFO_muControlBlock,
+  .cb_size = sizeof(UART6_FIFO_muControlBlock),
 };
 /* Definitions for UART_FIFO_e */
 osEventFlagsId_t UART_FIFO_eHandle;
 osStaticEventGroupDef_t UART_FIFO_eControlBlock;
 const osEventFlagsAttr_t UART_FIFO_e_attributes = {
-        .name = "UART_FIFO_e",
-        .cb_mem = &UART_FIFO_eControlBlock,
-        .cb_size = sizeof(UART_FIFO_eControlBlock),
+  .name = "UART_FIFO_e",
+  .cb_mem = &UART_FIFO_eControlBlock,
+  .cb_size = sizeof(UART_FIFO_eControlBlock),
 };
 /* Definitions for STEP_RESPON_GLOBAL_VARIABLE */
 osEventFlagsId_t STEP_RESPON_GLOBAL_VARIABLEHandle;
 osStaticEventGroupDef_t STEP_RESPON_GLOBAL_VARIABLEControlBlock;
 const osEventFlagsAttr_t STEP_RESPON_GLOBAL_VARIABLE_attributes = {
-        .name = "STEP_RESPON_GLOBAL_VARIABLE",
-        .cb_mem = &STEP_RESPON_GLOBAL_VARIABLEControlBlock,
-        .cb_size = sizeof(STEP_RESPON_GLOBAL_VARIABLEControlBlock),
+  .name = "STEP_RESPON_GLOBAL_VARIABLE",
+  .cb_mem = &STEP_RESPON_GLOBAL_VARIABLEControlBlock,
+  .cb_size = sizeof(STEP_RESPON_GLOBAL_VARIABLEControlBlock),
 };
 /* Definitions for Key_e */
 osEventFlagsId_t Key_eHandle;
 const osEventFlagsAttr_t Key_e_attributes = {
-        .name = "Key_e"
+  .name = "Key_e"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -278,34 +278,22 @@ const osEventFlagsAttr_t Key_e_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartINSTask(void *argument);
-
 void StartLEDTask(void *argument);
-
 void StartBUZTask(void *argument);
-
 void StartCANTask(void *argument);
-
 void StartUART1Task(void *argument);
-
 void StartUART6Task(void *argument);
-
 void StartSERVOTask(void *argument);
-
 void StartSTEP_RESPONSETask(void *argument);
-
 void StartUART6RxTask(void *argument);
-
 void StartUART1RxTask(void *argument);
-
-void StartMOTOR_TEMPTask(void *argument);
-
+void StartMOTORTask(void *argument);
 void StartTask12(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* Hook prototypes */
 void configureTimerForRunTimeStats(void);
-
 unsigned long getRunTimeCounterValue(void);
 
 /* USER CODE BEGIN 1 */
@@ -325,95 +313,95 @@ __weak unsigned long getRunTimeCounterValue(void) { return g_osRuntimeCounter; }
   * @retval None
   */
 void MX_FREERTOS_Init(void) {
-    /* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-    /* USER CODE END Init */
-    /* Create the mutex(es) */
-    /* creation of UART1_FIFO_mu */
-    UART1_FIFO_muHandle = osMutexNew(&UART1_FIFO_mu_attributes);
+  /* USER CODE END Init */
+  /* Create the mutex(es) */
+  /* creation of UART1_FIFO_mu */
+  UART1_FIFO_muHandle = osMutexNew(&UART1_FIFO_mu_attributes);
 
-    /* creation of UART6_FIFO_mu */
-    UART6_FIFO_muHandle = osMutexNew(&UART6_FIFO_mu_attributes);
+  /* creation of UART6_FIFO_mu */
+  UART6_FIFO_muHandle = osMutexNew(&UART6_FIFO_mu_attributes);
 
-    /* USER CODE BEGIN RTOS_MUTEX */
+  /* USER CODE BEGIN RTOS_MUTEX */
     /* add mutexes, ... */
-    /* USER CODE END RTOS_MUTEX */
+  /* USER CODE END RTOS_MUTEX */
 
-    /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
     /* add semaphores, ... */
-    /* USER CODE END RTOS_SEMAPHORES */
+  /* USER CODE END RTOS_SEMAPHORES */
 
-    /* USER CODE BEGIN RTOS_TIMERS */
+  /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
-    /* USER CODE END RTOS_TIMERS */
+  /* USER CODE END RTOS_TIMERS */
 
-    /* Create the queue(s) */
-    /* creation of LED_q */
-    LED_qHandle = osMessageQueueNew(16, sizeof(uint16_t), &LED_q_attributes);
+  /* Create the queue(s) */
+  /* creation of LED_q */
+  LED_qHandle = osMessageQueueNew (16, sizeof(uint16_t), &LED_q_attributes);
 
-    /* creation of BUZ_q */
-    BUZ_qHandle = osMessageQueueNew(16, sizeof(uint16_t), &BUZ_q_attributes);
+  /* creation of BUZ_q */
+  BUZ_qHandle = osMessageQueueNew (16, sizeof(uint16_t), &BUZ_q_attributes);
 
-    /* creation of SERVO_q */
-    SERVO_qHandle = osMessageQueueNew(16, sizeof(uint16_t), &SERVO_q_attributes);
+  /* creation of SERVO_q */
+  SERVO_qHandle = osMessageQueueNew (16, sizeof(uint16_t), &SERVO_q_attributes);
 
-    /* USER CODE BEGIN RTOS_QUEUES */
+  /* USER CODE BEGIN RTOS_QUEUES */
     /* add queues, ... */
-    /* USER CODE END RTOS_QUEUES */
+  /* USER CODE END RTOS_QUEUES */
 
-    /* Create the thread(s) */
-    /* creation of INSTask */
-    INSTaskHandle = osThreadNew(StartINSTask, NULL, &INSTask_attributes);
+  /* Create the thread(s) */
+  /* creation of INSTask */
+  INSTaskHandle = osThreadNew(StartINSTask, NULL, &INSTask_attributes);
 
-    /* creation of LEDTask */
-    LEDTaskHandle = osThreadNew(StartLEDTask, NULL, &LEDTask_attributes);
+  /* creation of LEDTask */
+  LEDTaskHandle = osThreadNew(StartLEDTask, NULL, &LEDTask_attributes);
 
-    /* creation of BUZTask */
-    BUZTaskHandle = osThreadNew(StartBUZTask, NULL, &BUZTask_attributes);
+  /* creation of BUZTask */
+  BUZTaskHandle = osThreadNew(StartBUZTask, NULL, &BUZTask_attributes);
 
-    /* creation of CANTask */
-    CANTaskHandle = osThreadNew(StartCANTask, NULL, &CANTask_attributes);
+  /* creation of CANTask */
+  CANTaskHandle = osThreadNew(StartCANTask, NULL, &CANTask_attributes);
 
-    /* creation of UART1Task */
-    UART1TaskHandle = osThreadNew(StartUART1Task, NULL, &UART1Task_attributes);
+  /* creation of UART1Task */
+  UART1TaskHandle = osThreadNew(StartUART1Task, NULL, &UART1Task_attributes);
 
-    /* creation of UART6Task */
-    UART6TaskHandle = osThreadNew(StartUART6Task, NULL, &UART6Task_attributes);
+  /* creation of UART6Task */
+  UART6TaskHandle = osThreadNew(StartUART6Task, NULL, &UART6Task_attributes);
 
-    /* creation of SERVOTask */
-    SERVOTaskHandle = osThreadNew(StartSERVOTask, NULL, &SERVOTask_attributes);
+  /* creation of SERVOTask */
+  SERVOTaskHandle = osThreadNew(StartSERVOTask, NULL, &SERVOTask_attributes);
 
-    /* creation of STEP_RESPONSETa */
-    STEP_RESPONSETaHandle = osThreadNew(StartSTEP_RESPONSETask, NULL, &STEP_RESPONSETa_attributes);
+  /* creation of STEP_RESPONSETa */
+  STEP_RESPONSETaHandle = osThreadNew(StartSTEP_RESPONSETask, NULL, &STEP_RESPONSETa_attributes);
 
-    /* creation of UART6RxTask */
-    UART6RxTaskHandle = osThreadNew(StartUART6RxTask, NULL, &UART6RxTask_attributes);
+  /* creation of UART6RxTask */
+  UART6RxTaskHandle = osThreadNew(StartUART6RxTask, NULL, &UART6RxTask_attributes);
 
-    /* creation of UART1RxTask */
-    UART1RxTaskHandle = osThreadNew(StartUART1RxTask, NULL, &UART1RxTask_attributes);
+  /* creation of UART1RxTask */
+  UART1RxTaskHandle = osThreadNew(StartUART1RxTask, NULL, &UART1RxTask_attributes);
 
-    /* creation of MOTOR_TEMPTask */
-    MOTOR_TEMPTaskHandle = osThreadNew(StartMOTOR_TEMPTask, NULL, &MOTOR_TEMPTask_attributes);
+  /* creation of MOTORTask */
+  MOTORTaskHandle = osThreadNew(StartMOTORTask, NULL, &MOTORTask_attributes);
 
-    /* creation of RunTimeStats */
-    RunTimeStatsHandle = osThreadNew(StartTask12, NULL, &RunTimeStats_attributes);
+  /* creation of RunTimeStats */
+  RunTimeStatsHandle = osThreadNew(StartTask12, NULL, &RunTimeStats_attributes);
 
-    /* USER CODE BEGIN RTOS_THREADS */
+  /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
-    /* USER CODE END RTOS_THREADS */
+  /* USER CODE END RTOS_THREADS */
 
-    /* creation of UART_FIFO_e */
-    UART_FIFO_eHandle = osEventFlagsNew(&UART_FIFO_e_attributes);
+  /* creation of UART_FIFO_e */
+  UART_FIFO_eHandle = osEventFlagsNew(&UART_FIFO_e_attributes);
 
-    /* creation of STEP_RESPON_GLOBAL_VARIABLE */
-    STEP_RESPON_GLOBAL_VARIABLEHandle = osEventFlagsNew(&STEP_RESPON_GLOBAL_VARIABLE_attributes);
+  /* creation of STEP_RESPON_GLOBAL_VARIABLE */
+  STEP_RESPON_GLOBAL_VARIABLEHandle = osEventFlagsNew(&STEP_RESPON_GLOBAL_VARIABLE_attributes);
 
-    /* creation of Key_e */
-    Key_eHandle = osEventFlagsNew(&Key_e_attributes);
+  /* creation of Key_e */
+  Key_eHandle = osEventFlagsNew(&Key_e_attributes);
 
-    /* USER CODE BEGIN RTOS_EVENTS */
+  /* USER CODE BEGIN RTOS_EVENTS */
     /* add events, ... */
-    /* USER CODE END RTOS_EVENTS */
+  /* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -424,15 +412,16 @@ void MX_FREERTOS_Init(void) {
  * @retval None
  */
 /* USER CODE END Header_StartINSTask */
-void StartINSTask(void *argument) {
-    /* USER CODE BEGIN StartINSTask */
+void StartINSTask(void *argument)
+{
+  /* USER CODE BEGIN StartINSTask */
 
     /* Infinite loop */
     for (;;) {
         INS_Task();
         osDelay(1);
     }
-    /* USER CODE END StartINSTask */
+  /* USER CODE END StartINSTask */
 }
 
 /* USER CODE BEGIN Header_StartLEDTask */
@@ -442,8 +431,9 @@ void StartINSTask(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_StartLEDTask */
-void StartLEDTask(void *argument) {
-    /* USER CODE BEGIN StartLEDTask */
+void StartLEDTask(void *argument)
+{
+  /* USER CODE BEGIN StartLEDTask */
     /* Infinite loop */
     for (;;) {
 
@@ -454,7 +444,7 @@ void StartLEDTask(void *argument) {
 //	  bsp_led_toggle (LED_GREEN);
         osDelay(pdMS_TO_TICKS(1000));
     }
-    /* USER CODE END StartLEDTask */
+  /* USER CODE END StartLEDTask */
 }
 
 /* USER CODE BEGIN Header_StartBUZTask */
@@ -464,8 +454,9 @@ void StartLEDTask(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_StartBUZTask */
-void StartBUZTask(void *argument) {
-    /* USER CODE BEGIN StartBUZTask */
+void StartBUZTask(void *argument)
+{
+  /* USER CODE BEGIN StartBUZTask */
     bsp_buz_set_major(BSP_BUZ_MAJOR_B);
     /* Infinite loop */
     for (;;) {
@@ -499,25 +490,7 @@ void StartBUZTask(void *argument) {
         osDelay(1000);
 
     }
-    /* USER CODE END StartBUZTask */
-}
-
-extern RC_ctrl_t rc_ctrl;
-
-void can_set(int x, int y, int z, char press_l, char press_r) {
-    static CAN_TxHeaderTypeDef chassis_tx_message;
-    static uint8_t chassis_can_send_data_1[8];
-    uint32_t send_mail_box;
-    chassis_tx_message.StdId = ch_set; // 0x120
-    chassis_tx_message.IDE = CAN_ID_STD;
-    chassis_tx_message.RTR = CAN_RTR_DATA;
-    chassis_tx_message.DLC = 0x0f;
-    chassis_can_send_data_1[0] = x;
-    chassis_can_send_data_1[1] = y;
-    chassis_can_send_data_1[2] = z;
-    chassis_can_send_data_1[3] = press_l;
-    chassis_can_send_data_1[4] = press_r;
-    HAL_CAN_AddTxMessage(&hcan1, &chassis_tx_message, chassis_can_send_data_1, &send_mail_box);
+  /* USER CODE END StartBUZTask */
 }
 
 /* USER CODE BEGIN Header_StartCANTask */
@@ -527,10 +500,9 @@ void can_set(int x, int y, int z, char press_l, char press_r) {
  * @retval None
  */
 /* USER CODE END Header_StartCANTask */
-int ind = 0;
-
-void StartCANTask(void *argument) {
-    /* USER CODE BEGIN StartCANTask */
+void StartCANTask(void *argument)
+{
+  /* USER CODE BEGIN StartCANTask */
 
     TickType_t xLastWakeUpTime = xTaskGetTickCount();
     char buf[128] = {0};
@@ -618,7 +590,7 @@ void StartCANTask(void *argument) {
 //                        (int16_t) 0);
         vTaskDelayUntil(&xLastWakeUpTime, 1);
     }
-    /* USER CODE END StartCANTask */
+  /* USER CODE END StartCANTask */
 }
 
 /* USER CODE BEGIN Header_StartUART1Task */
@@ -628,8 +600,9 @@ void StartCANTask(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_StartUART1Task */
-void StartUART1Task(void *argument) {
-    /* USER CODE BEGIN StartUART1Task */
+void StartUART1Task(void *argument)
+{
+  /* USER CODE BEGIN StartUART1Task */
 
     /*private variables*/
     char rx_data[MESSAGE_BUFFER_SIZE] = {0};
@@ -661,7 +634,7 @@ void StartUART1Task(void *argument) {
         }
         //    bsp_led_toggle(LED_GREEN);  //redundant led toggle for quick running state check
     }
-    /* USER CODE END StartUART1Task */
+  /* USER CODE END StartUART1Task */
 }
 
 /* USER CODE BEGIN Header_StartUART6Task */
@@ -671,8 +644,9 @@ void StartUART1Task(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_StartUART6Task */
-void StartUART6Task(void *argument) {
-    /* USER CODE BEGIN StartUART6Task */
+void StartUART6Task(void *argument)
+{
+  /* USER CODE BEGIN StartUART6Task */
     char rx_data[MESSAGE_BUFFER_SIZE] = {0};
     uint32_t rx_size = 0;
 
@@ -702,7 +676,7 @@ void StartUART6Task(void *argument) {
         }
         //    bsp_led_toggle(LED_GREEN);  //redundant led toggle for quick running state check
     }
-    /* USER CODE END StartUART6Task */
+  /* USER CODE END StartUART6Task */
 }
 
 /* USER CODE BEGIN Header_StartSERVOTask */
@@ -712,14 +686,15 @@ void StartUART6Task(void *argument) {
  * @retval None
  */
 /* USER CODE END Header_StartSERVOTask */
-void StartSERVOTask(void *argument) {
-    /* USER CODE BEGIN StartSERVOTask */
+void StartSERVOTask(void *argument)
+{
+  /* USER CODE BEGIN StartSERVOTask */
 
     /* Infinite loop */
     for (;;) {
         osDelay(1);
     }
-    /* USER CODE END StartSERVOTask */
+  /* USER CODE END StartSERVOTask */
 }
 
 /* USER CODE BEGIN Header_StartSTEP_RESPONSETask */
@@ -729,8 +704,9 @@ void StartSERVOTask(void *argument) {
 * @retval None
 */
 /* USER CODE END Header_StartSTEP_RESPONSETask */
-void StartSTEP_RESPONSETask(void *argument) {
-    /* USER CODE BEGIN StartSTEP_RESPONSETask */
+void StartSTEP_RESPONSETask(void *argument)
+{
+  /* USER CODE BEGIN StartSTEP_RESPONSETask */
     TickType_t xLastWakeUpTime = xTaskGetTickCount();
 
 #if USE_STEP_RESPONSE == 0 /*defined in freertos.c*/
@@ -746,7 +722,7 @@ void StartSTEP_RESPONSETask(void *argument) {
         set_bsp_pid_step_response_target(-100);
         vTaskDelayUntil(&xLastWakeUpTime, 1000);
     }
-    /* USER CODE END StartSTEP_RESPONSETask */
+  /* USER CODE END StartSTEP_RESPONSETask */
 }
 
 /* USER CODE BEGIN Header_StartUART6RxTask */
@@ -756,8 +732,9 @@ void StartSTEP_RESPONSETask(void *argument) {
 * @retval None
 */
 /* USER CODE END Header_StartUART6RxTask */
-void StartUART6RxTask(void *argument) {
-    /* USER CODE BEGIN StartUART6RxTask */
+void StartUART6RxTask(void *argument)
+{
+  /* USER CODE BEGIN StartUART6RxTask */
     /* Infinite loop */
     for (;;) {
         if (xTaskNotifyWait(0,
@@ -768,7 +745,7 @@ void StartUART6RxTask(void *argument) {
 //		  bsp_led_toggle (LED_GREEN);
         }
     }
-    /* USER CODE END StartUART6RxTask */
+  /* USER CODE END StartUART6RxTask */
 }
 
 /* USER CODE BEGIN Header_StartUART1RxTask */
@@ -778,8 +755,9 @@ void StartUART6RxTask(void *argument) {
 * @retval None
 */
 /* USER CODE END Header_StartUART1RxTask */
-void StartUART1RxTask(void *argument) {
-    /* USER CODE BEGIN StartUART1RxTask */
+void StartUART1RxTask(void *argument)
+{
+  /* USER CODE BEGIN StartUART1RxTask */
     /* Infinite loop */
     for (;;) {
         if (xTaskNotifyWait(0,
@@ -789,50 +767,25 @@ void StartUART1RxTask(void *argument) {
 //		  pid_sscanf (bsp_get_uart6_rx_buf ());
         }
     }
-    /* USER CODE END StartUART1RxTask */
+  /* USER CODE END StartUART1RxTask */
 }
 
-/* USER CODE BEGIN Header_StartMOTOR_TEMPTask */
+/* USER CODE BEGIN Header_StartMOTORTask */
 /**
-* @brief Function implementing the MOTOR_TEMPTask thread.
+* @brief Function implementing the MOTORTask thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartMOTOR_TEMPTask */
-void StartMOTOR_TEMPTask(void *argument) {
-    /* USER CODE BEGIN StartMOTOR_TEMPTask */
-    motor_measure_t *motor = get_measure_pointer(0);
-    uint8_t temperature[BSP_CAN_TOTAL_MORTOR_COUNT] = {0};
-    uint8_t temp = 0;
-    /* Infinite loop */
-    for (;;) {
-        /*reset temp to 0*/
-        temp = 0;
-
-        /*collect temperature together*/
-        for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;) {
-            temperature[i] = (motor + i)->temperate;
-            i++;
-        }
-
-        /*find max temperature*/
-        for (int i = 0; i < BSP_CAN_TOTAL_MORTOR_COUNT;) {
-            if (temperature[i] > temp) {
-                temp = temperature[i];
-            }
-            i++;
-        }
-
-        /*configMOTOR_ALARM_TEMPERATURE defined in main.h*/
-        if (temp >= configMOTOR_ALARM_TEMPERATURE) {
-            //todo call somthing safer to alarm
-            __disable_irq();
-            while (1);
-        }
-
-        osDelay(100);
-    }
-    /* USER CODE END StartMOTOR_TEMPTask */
+/* USER CODE END Header_StartMOTORTask */
+void StartMOTORTask(void *argument)
+{
+  /* USER CODE BEGIN StartMOTORTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartMOTORTask */
 }
 
 /* USER CODE BEGIN Header_StartTask12 */
@@ -842,8 +795,9 @@ void StartMOTOR_TEMPTask(void *argument) {
 * @retval None
 */
 /* USER CODE END Header_StartTask12 */
-void StartTask12(void *argument) {
-    /* USER CODE BEGIN StartTask12 */
+void StartTask12(void *argument)
+{
+  /* USER CODE BEGIN StartTask12 */
     static char InfoBuffer[512] = {0};
     /* Infinite loop */
     for (;;) {
@@ -852,7 +806,7 @@ void StartTask12(void *argument) {
         bsp_printf(BSP_UART1, "\r\n%s\r\n", InfoBuffer);
         osDelay(1000);
     }
-    /* USER CODE END StartTask12 */
+  /* USER CODE END StartTask12 */
 }
 
 /* Private application code --------------------------------------------------*/
