@@ -575,19 +575,10 @@ void StartCANTask (void *argument)
   for (;;)
 	{
 	  servo0_pos->ideal = -0.01F * (float) rc->mouse.ix;
-
 	  servo1_pos->ideal = -pit_lim (0.01F * (float) rc->mouse.iy);
 
-	  if (rc->mouse.press_l == true)
-		{
-		  wheel0->ideal = -6000;
-		  wheel1->ideal = 6000;
-		}
-	  else if (rc->mouse.press_l == false)
-		{
-		  wheel0->ideal = 0;
-		  wheel1->ideal = 0;
-		}
+	  wheel0->ideal = 0;
+	  wheel1->ideal = 0;
 
 	  if (rc->mouse.press_r == 1)
 		{
@@ -621,6 +612,7 @@ void StartCANTask (void *argument)
 
 	  CAN_SendMessage (CAN_CHANNEL_1,
 					   MOTOR_5678,
+//					   0,
 					   (int16_t) servo1_spd->output,
 //					   0,
 					   (int16_t) servo0_spd->output,
