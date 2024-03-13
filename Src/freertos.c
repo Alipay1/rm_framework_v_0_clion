@@ -507,6 +507,22 @@ void StartBUZTask (void *argument)
 }
 
 /* USER CODE BEGIN Header_StartCANTask */
+
+float pit_lim (float input)
+{
+  if (input > 21.0F)
+	{
+	  return 21.0F;
+	}
+  else if (input < -25.0F)
+	{
+	  return -25.0F;
+	}
+  else
+	{
+	  return input;
+	}
+}
 /**
  * @brief Function implementing the CANTask thread.
  * @param argument: Not used
@@ -558,8 +574,9 @@ void StartCANTask (void *argument)
   /* Infinite loop */
   for (;;)
 	{
-	  servo0_pos->ideal = 0.01F * (float) rc->mouse.iy;
-	  servo1_pos->ideal = 0.01F * (float) rc->mouse.ix;
+	  servo0_pos->ideal = -0.01F * (float) rc->mouse.ix;
+
+	  servo1_pos->ideal = -pit_lim (0.01F * (float) rc->mouse.iy);
 
 	  if (rc->mouse.press_l == true)
 		{
@@ -591,9 +608,10 @@ void StartCANTask (void *argument)
 
 //	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
 //	  bsp_printf (BSP_UART1, "%f,%f\r\n", servo1_spd->output, (raw_motor_pid + 4)->output);
+	  bsp_printf (BSP_UART1, "%d,%d\r\n", rc->mouse.y, rc->mouse.iy);
 
 	  CAN_SendMessage (CAN_CHANNEL_2, ECD_REPORT,
-					   motor5->ecd, 0, 0, 0);
+					   motor5->ecd << 8 | motor5->ecd >> 8, 0, 0, 0);
 
 	  CAN_SendMessage (CAN_CHANNEL_1, MOTOR_1234,
 					   (int16_t) wheel0->output,
@@ -604,6 +622,7 @@ void StartCANTask (void *argument)
 	  CAN_SendMessage (CAN_CHANNEL_1,
 					   MOTOR_5678,
 					   (int16_t) servo1_spd->output,
+//					   0,
 					   (int16_t) servo0_spd->output,
 					   0,
 					   0);

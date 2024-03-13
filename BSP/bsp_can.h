@@ -33,8 +33,8 @@ extern CAN_HandleTypeDef hcan2;
 
 #define bsp_can_get_rc_from_chassis(ptr, data)                  \
     {                                                           \
-        (ptr)->mouse.x = (int16_t)((data)[1] << 8 | (data)[0]); \
-        (ptr)->mouse.y = (int16_t)((data)[3] << 8 | (data)[2]); \
+        (ptr)->mouse.x = (int16_t)((data)[0] << 8 | (data)[1]); \
+        (ptr)->mouse.y = (int16_t)((data)[2] << 8 | (data)[3]); \
         (ptr)->mouse.press_l = (data)[4];                       \
         (ptr)->mouse.press_r = (data)[5];                       \
         (ptr)->key.v = (uint16_t)((data)[7] << 8 | (data)[6]);  \
@@ -69,7 +69,7 @@ typedef enum {
 
   CAN_GIMBAL_ALL_ID = 0x1FF,
 
-  CHASSIS_CONTROLLER = 0x519,//底盘发来的遥控器信息
+  RC_REPORT_ID = 0x519,//底盘发来的遥控器信息
 
   ECD_REPORT_ID = 0x520,//向底盘发送YAW角度
 

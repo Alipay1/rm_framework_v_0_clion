@@ -137,8 +137,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback (CAN_HandleTypeDef *hcan)
 			  break;
 			}
 
-		  case CHASSIS_CONTROLLER:
-		  bsp_can_get_rc_from_chassis(get_remote_control_point (), rx_data);
+		  case RC_REPORT_ID:
+			{
+			  bsp_can_get_rc_from_chassis(get_remote_control_point (), rx_data);
+			  break;
+			}
 
 		  default:
 			{

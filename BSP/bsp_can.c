@@ -89,9 +89,7 @@ CAN_SendMessage (can_channel_id CAN_Channel, motor_id_range MOTOR_ID_RANGE,
 
   switch (MOTOR_ID_RANGE)
 	{
-	  case MOTOR_1234:
-
-		pxHeader->StdId = CAN_CHASSIS_ALL_ID;
+	  case MOTOR_1234: pxHeader->StdId = CAN_CHASSIS_ALL_ID;
 	  break;
 	  case MOTOR_5678: pxHeader->StdId = CAN_GIMBAL_ALL_ID;
 	  break;
