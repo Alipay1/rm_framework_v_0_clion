@@ -114,7 +114,7 @@ void nav_main (void)
 	  nav.Vw = 0;
 
 	}
-  TR_radian_1_3 = (8192 - 760.0) * PI * 2 / 8192;
+//  TR_radian_1_3 = (8192 - 760.0) * PI * 2 / 8192;
   radian_xy = atan2 (nav.Vy, nav.Vx);
   TR_radian_xy = radian_xy + ag;
   TR_radian_1 = 3 * PI / 4 - radian_xy - ag;
