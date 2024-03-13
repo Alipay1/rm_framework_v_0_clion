@@ -80,7 +80,7 @@ add_link_options(-mcpu=cortex-m4 -mthumb -mthumb-interwork)
 add_link_options(-T ${LINKER_SCRIPT})
 
 #disable RWX warning
-add_link_options(-Wl,--no-warn-rwx-segments)
+#add_link_options(-Wl,--no-warn-rwx-segments)
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 

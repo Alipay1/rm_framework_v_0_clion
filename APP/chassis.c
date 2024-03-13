@@ -1,29 +1,29 @@
 #include "chassis.h"
 #include "arm_math.h"
-
+#include "app_nav.h"
 #include "app_rc.h"
 #include "app_pid.h"
 
 extern RC_ctrl_t rc_ctrl;
 typedef struct {
-  uint8_t mode;
-  //PID 三参数
-  fp32 Kp;
-  fp32 Ki;
-  fp32 Kd;
+    uint8_t mode;
+    //PID 三参数
+    fp32 Kp;
+    fp32 Ki;
+    fp32 Kd;
 
-  fp32 max_out;  //最大输出
-  fp32 max_iout; //最大积分输出
+    fp32 max_out;  //最大输出
+    fp32 max_iout; //最大积分输出
 
-  fp32 set;
-  fp32 fdb;
+    fp32 set;
+    fp32 fdb;
 
-  fp32 out;
-  fp32 Pout;
-  fp32 Iout;
-  fp32 Dout;
-  fp32 Dbuf[3];  //微分项 0最新 1上一次 2上上次
-  fp32 error[3]; //误差项 0最新 1上一次 2上上次
+    fp32 out;
+    fp32 Pout;
+    fp32 Iout;
+    fp32 Dout;
+    fp32 Dbuf[3];  //微分项 0最新 1上一次 2上上次
+    fp32 error[3]; //误差项 0最新 1上一次 2上上次
 
 } PidTypeDef;
 PidTypeDef pid_car_lt1, pid_car_lt2, pid_car_rt1, pid_car_rt2, pid_car_follow_gimbal;
@@ -90,124 +90,39 @@ int MS7010_BR_ANGLE2 = (4239);
 //底盘控制模式
 uint8_t CHASSIS_MODE;
 
-void Chassis_Task (void const *argument)
-{
-  vTaskDelay (CHASSIS_TASK_INIT_TIME);
+void Chassis_Task(void const *argument) {
+    vTaskDelay(CHASSIS_TASK_INIT_TIME);
 
-  //初始化底盘模式为 底盘无力模式
-  CHASSIS_MODE = CHASSIS_ZERO_FORCE;
+    //初始化底盘模式为 底盘无力模式
+    CHASSIS_MODE = CHASSIS_ZERO_FORCE;
 
-  pid_chassis_all_init (); //pid参数初始化
+    pid_chassis_all_init(); //pid参数初始化
 
-  while (1)
-	{
-	  chassis_mode_switch ();  //根据遥控器 选择底盘控制模式
-	  chassis_target_calc (CHASSIS_MODE); //根据不同模式 计算控制目标值
-	  chassis_calc_cmd (CHASSIS_MODE); //PID计算并输出
+    while (1) {
+        chassis_mode_switch();  //根据遥控器 选择底盘控制模式
+        chassis_target_calc(CHASSIS_MODE); //根据不同模式 计算控制目标值
+        chassis_calc_cmd(CHASSIS_MODE); //PID计算并输出
 
-	  vTaskDelay (CHASSIS_CONTROL_TIME);
+        vTaskDelay(CHASSIS_CONTROL_TIME);
 
-	}
+    }
 
 }
 
 //将电机转子转向内侧时 修正方向
-int8_t dirt[4] = {1, -1, 1, -1};
-void chassis_vector_to_M3508_wheel_speed (fp32 vx_set, fp32 vy_set, fp32 wz_set, fp32 wheel_speed[4])
+
+
+void chassis_mode_switch(void) //模式选择函数
 {
-  fp32 wheel_rpm_ratio;
-
-  wheel_rpm_ratio = 60.0f / (WHEEL_PERIMETER * 3.14159f) * M3508_RATIO * 1000;
-
-  wheel_speed[0] = dirt[0] * sqrt (pow (vy_set + wz_set * Radius * 0.707107f, 2)
-								   + pow (vx_set - wz_set * Radius * 0.707107f, 2)
-  ) * wheel_rpm_ratio;
-  wheel_speed[1] = dirt[1] * sqrt (pow (vy_set - wz_set * Radius * 0.707107f, 2)
-								   + pow (vx_set - wz_set * Radius * 0.707107f, 2)
-  ) * wheel_rpm_ratio;
-  wheel_speed[2] = dirt[2] * sqrt (pow (vy_set - wz_set * Radius * 0.707107f, 2)
-								   + pow (vx_set + wz_set * Radius * 0.707107f, 2)
-  ) * wheel_rpm_ratio;
-  wheel_speed[3] = dirt[3] * sqrt (pow (vy_set + wz_set * Radius * 0.707107f, 2)
-								   + pow (vx_set + wz_set * Radius * 0.707107f, 2)
-  ) * wheel_rpm_ratio;
-
-}
-
-fp64 atan_angle[4];
-void chassis_vector_to_M7010_wheel_angle (fp32 vx_set, fp32 vy_set, fp32 wz_set, fp32 wheel_angle[4])
-{
-  PID *servo0_pos = pid_get_struct_pointer (4 + 4, NORMAL_MOTOR);/*4 + 4 indicates motor5(4) -> PID -> position(+4)*/
-  motor_measure_t *gm6020 = get_measure_pointer (4);
-
-  //7010目标角度计算
-  if (!(vx_set == 0 && vy_set == 0 && wz_set == 0))//防止除数为零
-	{
-	  //由于atan2算出来的结果是弧度，需转换成角度 计算公式为 弧度 * 180.f / PI 最终得到角度值 (0.707107f == 根号2)
-	  atan_angle[0] =
-		  atan2 ((vx_set - wz_set * Radius * 0.707107f), (vy_set + wz_set * Radius * 0.707107f)) * 180.0f / PI;
-	  atan_angle[1] =
-		  atan2 ((vx_set - wz_set * Radius * 0.707107f), (vy_set - wz_set * Radius * 0.707107f)) * 180.0f / PI;
-	  atan_angle[2] =
-		  atan2 ((vx_set + wz_set * Radius * 0.707107f), (vy_set + wz_set * Radius * 0.707107f)) * 180.0f / PI;
-	  atan_angle[3] =
-		  atan2 ((vx_set + wz_set * Radius * 0.707107f), (vy_set - wz_set * Radius * 0.707107f)) * 180.0f / PI;
-	}
-
-  // 将一圈360°转换成编码值的一圈0-8191 -> 角度 * 8191 / 360 最终转换为需要转动的角度对应的编码值，再加上偏置角度,最终得到目标编码值
-  wheel_angle[0] = Angle_Limit (MS7010_FL_ANGLE + (fp32) (atan_angle[0] * 22.75277777777f), 8191.f);
-  wheel_angle[1] = Angle_Limit (MS7010_FR_ANGLE + (fp32) (atan_angle[1] * 22.75277777777f), 8191.f);
-  wheel_angle[2] = Angle_Limit (MS7010_BL_ANGLE + (fp32) (atan_angle[2] * 22.75277777777f), 8191.f);
-  wheel_angle[3] = Angle_Limit (MS7010_BR_ANGLE + (fp32) (atan_angle[3] * 22.75277777777f), 8191.f);
-
-  //优弧 劣弧 驱动电机转向判断
-  if (ABS ((fp32) gm6020[0].total_ecd - wheel_angle[0]) > 2048)
-	{
-	  dirt[0] = -1;
-	  wheel_angle[0] = Angle_Limit (wheel_angle[0] - 4096, 8191);
-	}
-  else
-	dirt[0] = 1;
-
-  if (ABS ((fp32) gm6020[1].total_ecd - wheel_angle[1]) > 2048)
-	{
-	  dirt[1] = 1;
-	  wheel_angle[1] = Angle_Limit (wheel_angle[1] - 4096, 8191);
-	}
-  else
-	dirt[1] = -1;
-
-  if (ABS ((fp32) gm6020[2].total_ecd - wheel_angle[2]) > 2048)
-	{
-	  dirt[2] = -1;
-	  wheel_angle[2] = Angle_Limit (wheel_angle[2] - 4096, 8191);
-	}
-  else
-	dirt[2] = 1;
-
-  if (ABS ((fp32) gm6020[3].total_ecd - wheel_angle[3]) > 2048)
-	{
-	  dirt[3] = 1;
-	  wheel_angle[3] = Angle_Limit (wheel_angle[3] - 4096, 8191);
-	}
-  else
-	dirt[3] = -1;
-
-}
-
-void chassis_mode_switch (void) //模式选择函数
-{
-  if (switch_is_mid (rc_ctrl.rc.s[RC_SW_RIGHT]) || switch_is_up (rc_ctrl.rc.s[RC_SW_RIGHT]))
-	{
-	  if (switch_is_down (rc_ctrl.rc.s[RC_SW_LEFT]))        //左侧拨杆在下面 遥控器模式
-		CHASSIS_MODE = CHASSIS_RC_GYROSCOPE;
-	  if (switch_is_mid (rc_ctrl.rc.s[RC_SW_LEFT]))            //左侧拨杆在中间 底盘跟随云台
-		CHASSIS_MODE = CHASSIS_RC_FOLLOW_GIMBAL;
-	  if (switch_is_up (rc_ctrl.rc.s[RC_SW_LEFT]))            //左侧拨杆在上面 PC模式
-		CHASSIS_MODE = CHASSIS_PC_CONTROL;
-	}
-  else //右侧拨杆在下面 云台无力模式
-	CHASSIS_MODE = CHASSIS_ZERO_FORCE;
+    if (switch_is_mid (rc_ctrl.rc.s[RC_SW_RIGHT]) || switch_is_up (rc_ctrl.rc.s[RC_SW_RIGHT])) {
+        if (switch_is_down (rc_ctrl.rc.s[RC_SW_LEFT]))        //左侧拨杆在下面 遥控器模式
+            CHASSIS_MODE = CHASSIS_RC_GYROSCOPE;
+        if (switch_is_mid (rc_ctrl.rc.s[RC_SW_LEFT]))            //左侧拨杆在中间 底盘跟随云台
+            CHASSIS_MODE = CHASSIS_RC_FOLLOW_GIMBAL;
+        if (switch_is_up (rc_ctrl.rc.s[RC_SW_LEFT]))            //左侧拨杆在上面 PC模式
+            CHASSIS_MODE = CHASSIS_PC_CONTROL;
+    } else //右侧拨杆在下面 云台无力模式
+        CHASSIS_MODE = CHASSIS_ZERO_FORCE;
 }
 
 //void chassis_target_calc (uint8_t Mode) //Target计算函数
@@ -247,11 +162,10 @@ void chassis_mode_switch (void) //模式选择函数
 //}
 
 //将角度范围控制在 0 - 8191
-float Angle_Limit (float angle, float max)
-{
-  if (angle > max)
-	angle -= max;
-  if (angle < 0)
-	angle += max;
-  return angle;
+float Angle_Limit(float angle, float max) {
+    if (angle > max)
+        angle -= max;
+    if (angle < 0)
+        angle += max;
+    return angle;
 }

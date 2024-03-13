@@ -1,5 +1,5 @@
-#ifndef __CHASSIS_TASK_H__
-#define __CHASSIS_TASK_H__
+#ifndef CHASSIS_H_
+#define CHASSIS_H_
 
 #include "FreeRTOS.h"
 #include "task.h"
