@@ -27,6 +27,8 @@ float abs_f (float value)
 static PID pid_struct[PID_SPEED_STRUCT_NUM] = {0};
 PID raw_pid_struct[PID_SPEED_STRUCT_NUM] = {0};
 
+#define PID_DEFAULT_STATE false
+
 int PID_Setup (void)
 {
   uint8_t i = 0;
@@ -85,8 +87,8 @@ int PID_Setup (void)
   (pid_struct + i)->motor_number = 5;
   (pid_struct + i)->active = false;
   (pid_struct + i)->ideal = 0;
-  (pid_struct + i)->Kp = 5500.0f; /*6*/
-  (pid_struct + i)->Ki = 140.0f;
+  (pid_struct + i)->Kp = 5000.0f; /*6*/
+  (pid_struct + i)->Ki = 115.0f;
   (pid_struct + i)->Kd = 0;
   (pid_struct + i)->Limit_Iout = 15000;
   (pid_struct + i)->Limit_Out = 15000;

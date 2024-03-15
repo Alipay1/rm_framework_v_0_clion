@@ -577,7 +577,7 @@ void StartCANTask (void *argument)
 	  servo0_pos->ideal = -0.01F * (float) rc->mouse.ix;
 	  servo1_pos->ideal = -pit_lim (0.01F * (float) rc->mouse.iy);
 
-	  wheel0->ideal = 0;
+	  wheel0->ideal = -0;
 	  wheel1->ideal = 0;
 
 	  if (rc->mouse.press_r == 1)
@@ -598,8 +598,8 @@ void StartCANTask (void *argument)
 //	  PID_Calculate_single (wheel3);
 
 //	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
-//	  bsp_printf (BSP_UART1, "%f,%f\r\n", servo1_spd->output, (raw_motor_pid + 4)->output);
-	  bsp_printf (BSP_UART1, "%d,%d\r\n", rc->mouse.y, rc->mouse.iy);
+	  bsp_printf (BSP_UART1, "%f,%f\r\n", servo1_spd->output, servo1_spd->output);
+//	  bsp_printf (BSP_UART1, "%d,%d\r\n", rc->mouse.y, rc->mouse.iy);
 
 	  CAN_SendMessage (CAN_CHANNEL_2, ECD_REPORT,
 					   motor5->ecd << 8 | motor5->ecd >> 8, 0, 0, 0);

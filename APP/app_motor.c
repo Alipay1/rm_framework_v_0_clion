@@ -84,23 +84,25 @@ app_motor_t *get_motor_mon_ptr (uint8_t motor_num)
  */
 void app_motor_online (uint8_t motor_num)
 {
-  if (motor_num >= MOTOR_MON_NUM)
+//  if (motor_num >= MOTOR_MON_NUM)
+//	{
+//	  return;
+//	}
+
+  uint8_t temp = app_motor_index_tran (motor_num);
+  PID *motor_pid = pid_get_ptr (temp);//获取速度环pid结构体
+
+//  if (motor_mon[motor_num].online.online == false)
+//	{
+//	  motor_pid->active = true;
+//	}
+  if ((temp + 4) < 12 && (temp + 4) > 7)//如果是6020
 	{
-	  return;
+	  PID *motor_pid_pos = pid_get_ptr (temp + 4);//获取速度环pid结构体
+	  motor_pid_pos->active = true;
 	}
 
-  if (motor_mon[motor_num].online.online == false)
-	{
-	  uint8_t temp = app_motor_index_tran (motor_num);
-	  PID *motor_pid = pid_get_ptr (temp);//获取速度环pid结构体
-	  motor_pid->active = true;
-	  if (temp > 3 && temp < 8)//如果是6020
-		{
-		  PID *motor_pid_pos = pid_get_ptr (temp + 4);//获取速度环pid结构体
-		  motor_pid_pos->active = true;
-		}
-	}
-
+  motor_pid->active = true;
   motor_mon[motor_num].online.online = true;
   motor_mon[motor_num].online.last_tick = get_app_motor_tick;
 }
