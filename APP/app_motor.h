@@ -19,8 +19,6 @@
 #define APP_MOTOR_USE_DEFAULT_WAIT_TICK 1
 #define APP_MOTOR_DEFAULT_WAIT_TICK 100U
 
-#define MOTOR_MON_NUM 8U
-
 /**
  * @brief app_motor结构体
  * @var last_tick 123
@@ -40,6 +38,9 @@ typedef struct {
   }
 	  ovh;
 } app_motor_t;
+
+#define MOTOR_MON_NUM 8U
+extern app_motor_t motor_mon[MOTOR_MON_NUM];
 
 #define get_app_motor_tick HAL_GetTick()
 //#define get_app_motor_tick xTaskGetTickCount()

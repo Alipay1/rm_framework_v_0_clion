@@ -50,6 +50,7 @@
 #include "usbd_cdc_if.h"
 #include "bsp_isr.h"
 #include "app_motor.h"
+#include "app_aim.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedValue"
@@ -598,8 +599,11 @@ void StartCANTask (void *argument)
 //	  PID_Calculate_single (wheel3);
 
 //	  bsp_printf (BSP_UART6, "%f,%f,%f\r\n", INS.YawTotalAngle, INS.Pitch, INS.Roll);
-	  bsp_printf (BSP_UART1, "%f,%f\r\n", servo1_spd->output, servo1_spd->output);
+//	  bsp_printf (BSP_UART1, "%f,%f\r\n", servo1_spd->output, servo1_spd->output);
 //	  bsp_printf (BSP_UART1, "%d,%d\r\n", rc->mouse.y, rc->mouse.iy);
+	  bsp_printf (BSP_UART1, "%d,%d\r\n", sizeof (struct McuData), sizeof (struct SendData));
+
+	  app_aim_send ();
 
 	  CAN_SendMessage (CAN_CHANNEL_2, ECD_REPORT,
 					   motor5->ecd << 8 | motor5->ecd >> 8, 0, 0, 0);

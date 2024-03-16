@@ -22,6 +22,7 @@
 #include "app_pid.h"
 #include "app_rc.h"
 #include "app_motor.h"
+#include "app_aim.h"
 
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
@@ -63,8 +64,8 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
 
 	  vTaskNotifyGiveFromISR (UART1RxTaskHandle, NULL);
 
-	  pid_sscanf (bsp_get_uart1_rx_buf ());
-	  bsp_led_toggle (LED_GREEN);
+//	  pid_sscanf (bsp_get_uart1_rx_buf ());
+//	  bsp_led_toggle (LED_GREEN);
 
 	  bsp_uart1_start_idle_dma_rx ();
 	  goto End_Of_HAL_UARTEx_RxEventCallback;
@@ -74,8 +75,8 @@ void HAL_UARTEx_RxEventCallback (UART_HandleTypeDef *huart, uint16_t Size)
 	  extern osThreadId_t UART6RxTaskHandle;    // from freertos.c
 	  vTaskNotifyGiveFromISR (UART6RxTaskHandle, NULL);
 
-	  pid_sscanf (bsp_get_uart6_rx_buf ());
-	  bsp_led_toggle (LED_GREEN);
+//	  bsp_led_toggle (LED_GREEN);
+	  app_aim_decode (Size);
 
 	  bsp_uart6_start_idle_dma_rx ();
 	  goto End_Of_HAL_UARTEx_RxEventCallback;

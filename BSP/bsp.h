@@ -16,5 +16,8 @@
 #include "bsp_uart.h"
 #include "bsp_can.h"
 #include "bsp_buz.h"
+#include "bsp_check.h"
+#include "bsp_dwt.h"
+#include "bsp_rc.h"
 
 #endif // C_BOARD_STANDARD_ROBOT_BSP_H

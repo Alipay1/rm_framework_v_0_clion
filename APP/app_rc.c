@@ -25,6 +25,7 @@
 
 #include "bsp_uart.h"
 #include "bsp_rc.h"
+#include "app_motor.h"
 
 #include "string.h"
 
@@ -275,8 +276,18 @@ static void sbus_to_rc (volatile const uint8_t *sbus_buf, RC_ctrl_t *rc_ctrl)
   rc_ctrl->rc.ch[3] -= RC_CH_VALUE_OFFSET;
   rc_ctrl->rc.ch[4] -= RC_CH_VALUE_OFFSET;
 
-  rc_ctrl->mouse.ix += rc_ctrl->mouse.x;
-  rc_ctrl->mouse.iy += rc_ctrl->mouse.y;
+
+  //todo 检查此处4 5和x y的对应关系
+  if (motor_mon[5].online.online == true)
+	{
+	  rc_ctrl->mouse.ix += rc_ctrl->mouse.x;
+	}
+
+  if (motor_mon[4].online.online == true)
+	{
+	  rc_ctrl->mouse.iy += rc_ctrl->mouse.y;
+	}
+
   rc_ctrl->mouse.iz += rc_ctrl->mouse.z;
 }
 

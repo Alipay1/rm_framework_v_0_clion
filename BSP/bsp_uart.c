@@ -31,6 +31,7 @@ HAL_StatusTypeDef bsp_uart1_start_idle_dma_rx (void)
   __HAL_DMA_DISABLE_IT (&hdma_usart1_rx, DMA_IT_HT);
   return ret;
 }
+
 HAL_StatusTypeDef bsp_uart6_start_idle_dma_rx (void)
 {
   HAL_StatusTypeDef ret = HAL_ERROR;
